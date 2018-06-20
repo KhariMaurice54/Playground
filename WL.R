@@ -41,3 +41,8 @@ Likelydata(a1 = .25)
 a1seq = seq(0,2,length = 1000)
 Lvalues = sapply(a1seq, Likelydata, data = temp)
 plot(a1seq, Lvalues, type = "l")
+
+
+abline(v = a1seq[which.max(Lvalues)])
+abline(h = max(Lvalues))
+
