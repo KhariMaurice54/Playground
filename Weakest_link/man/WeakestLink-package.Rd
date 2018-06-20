@@ -1,31 +1,30 @@
-\name{Weakest_link-package}
-\alias{Weakest_link-package}
-\alias{Weakest_link}
+\name{WeakestLink-package}
+\alias{WeakestLink-package}
+\alias{WeakestLink}
 \docType{package}
 \title{
-\packageTitle{Weakest_link}
+\packageTitle{WeakestLink}
 }
 \description{
-\packageDescription{Weakest_link}
+\packageDescription{WeakestLink}
 }
 \details{
 
 The DESCRIPTION file:
-\packageDESCRIPTION{Weakest_link}
-\packageIndices{Weakest_link}
+\packageDESCRIPTION{WeakestLink}
+\packageIndices{WeakestLink}
 ~~ An overview of how to use the package, including the most important ~~
 ~~ functions ~~
 }
 \author{
-\packageAuthor{Weakest_link}
+\packageAuthor{WeakestLink}
 
-Maintainer: \packageMaintainer{Weakest_link}
+Maintainer: \packageMaintainer{WeakestLink}
 }
 \references{
 ~~ Literature or other references for background information ~~
 }
-~~ Optionally other standard keywords, one per line, from file KEYWORDS in the ~~
-~~ R documentation directory ~~
+
 \keyword{ package }
 \seealso{
 ~~ Optional links to other man pages, e.g. ~~

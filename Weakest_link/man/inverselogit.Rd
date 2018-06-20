@@ -1,9 +1,7 @@
 \name{inverselogit}
 \alias{inverselogit}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-%%  ~~function to do ... ~~
-}
+\title{Inverse of the log odds function}
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
