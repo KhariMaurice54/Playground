@@ -29,7 +29,7 @@ Two_Dimensional = function(){
   points(a1seq[rmax], a2seq[cmax], col = "red", pch = "o", cex = 4)
   return(c(maximum = max(Lvalues), a1maximizer = a1seq[rmax], a2maximizer = a2seq[cmax]))
 }
-Two_Dimensional()
+#Two_Dimensional()
 
 ####Finding a more accurate maximizer liklihood estimate by "hem-stiching"(conditional maximization)####
 Four_Dimensional = function(starting_vector = list(a1 = 1, a2 = 1, b1 = 1, b2 = 1)){
@@ -49,15 +49,54 @@ A2_Varies = function(a2){
              a2 = a2, 
              b2 = starting_vector$b2)
 }
-starting_vector = list(a1 = 0, a2 = 0, b1 = 1, b2 = 2)
-ConMaxResult = sapply(1:10, function(n){
-  newa1 = optimize(f = A1_Varies, interval = c(0,2), maximum = TRUE)$maximum
-  newa2 = optimize(f = A2_Varies, interval = c(0,2), maximum = TRUE)$maximum
-  starting_vector$a1 <<- newa1
-  starting_vector$a2 <<- newa2
-  points(newa1, newa2, col = "green", pch = "o", cex = 4)
-  return(c(maximum = Likelydata(starting_vector), a1maximizer = newa1, a2maximizer = newa2))
+B1_Varies = function(b1){
+  Likelydata(b1 = b1, 
+             a1 = starting_vector$a1, 
+             a2 = starting_vector$a2, 
+             b2 = starting_vector$b2)
 }
-)
-Likelydata(a1 = 0.7351119, a2 =0.9536362, b1 = 1, b2 = 2)
-
+B2_Varies = function(b2){
+  Likelydata(a1 = starting_vector$a1, 
+             b1 = starting_vector$b1, 
+             b2 = b2, 
+             a2 = starting_vector$a2)
+}
+ConMaxStep = function(){
+  newa1 = optimize(f = A1_Varies, interval = c(0,2), maximum = TRUE)$maximum
+  starting_vector$a1 <<- newa1
+  newa2 = optimize(f = A2_Varies, interval = c(0,2), maximum = TRUE)$maximum
+  starting_vector$a2 <<- newa2
+  newb1 = optimize(f = B1_Varies, interval = c(0,2), maximum = TRUE)$maximum
+  starting_vector$b1 <<- newb1
+  newb2 = optimize(f = B2_Varies, interval = c(0,2), maximum = TRUE)$maximum
+  starting_vector$b2 <<- newb2
+  return(c(maximum = Likelydata(a1a2b1b2 = starting_vector), 
+           a1maximizer = newa1, 
+           a2maximizer = newa2,
+           b1maximizer = newb1, 
+           b2maximizer = newb2))
+}
+ConMax = function(tol = 1e-7, 
+                  starting_vector = list(a1 = 1, a2 = 3, b1 = 0, b2 = 1)
+){
+  starting_vector <<- starting_vector
+  shouldstop = FALSE
+  Results = NULL
+  while(shouldstop == FALSE){
+    Temp = ConMaxStep()
+    if(is.null(Results)){
+      Results = t(as.data.frame(Temp))
+    }
+    else{
+      Results = rbind(Results, Temp)
+      Delta = Results[nrow(Results), "maximum"] -
+        Results[nrow(Results) - 1, "maximum"]
+      if(Delta < tol){
+        shouldstop = TRUE
+      }
+    }
+  }
+  return(Results)
+}
+ConMaxResult = ConMax(tol = 1e-9)
+pairs(ConMaxResult)
