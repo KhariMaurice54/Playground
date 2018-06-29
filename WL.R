@@ -1,10 +1,9 @@
 require(WeakestLink)
-temp=WLbinarydata()
+temp= WLbinarydata()
 pairs(temp)
 
 temp=WLContinuousdata(n = 150)
 pairs(temp)
-
 
 Likelydata()
 a1seq = seq(0,2,length = 100)
@@ -29,7 +28,7 @@ Two_Dimensional = function(){
   points(a1seq[rmax], a2seq[cmax], col = "red", pch = "o", cex = 4)
   return(c(maximum = max(Lvalues), a1maximizer = a1seq[rmax], a2maximizer = a2seq[cmax]))
 }
-#Two_Dimensional()
+Two_Dimensional()
 
 ####Finding a more accurate maximizer liklihood estimate by "hem-stiching"(conditional maximization)####
 Four_Dimensional = function(starting_vector = list(a1 = 1, a2 = 1, b1 = 1, b2 = 1)){
