@@ -184,17 +184,9 @@ $(document).ready(function () {
 <p>This code is a function that generates random binary data with 200 “patients”, checks the minimum value of each patient(either 0 or 1), and plots each “patient” in pairs based on that value.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuV0xiaW5hcnlkYXRhIDwtXG5mdW5jdGlvbihuID0gMjAwLCBwMCA9IC4xLCBwMSA9IC41KXtcbiAgeDEgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0gMS8yKVxuICB4MiA9IHJiaW5vbShuID0gbiwgc2l6ZSA9IDEsIHByb2IgPSAxLzIpXG4gIHgxeDIgPSBjYmluZCh4MSwgeDIpXG4gIGJvdGggPSBhcHBseShYID0geDF4MiwgTUFSR0lOID0gMSwgRlVOID0gbWluKVxuICB5cHJvYiA9IHAwICogKGJvdGggPT0gMCkgKyBwMSAqIChib3RoID09IDEpXG4gIHkgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0geXByb2IpXG4gIHJldHVybihkYXRhLmZyYW1lKHgxLCB4MiwgeSwgYm90aCkpXG59XG5gYGAifQ== -->
-<pre class="r"><code>WLbinarydata &lt;-
-function(n = 200, p0 = .1, p1 = .5){
-  x1 = rbinom(n = n, size = 1, prob = 1/2)
-  x2 = rbinom(n = n, size = 1, prob = 1/2)
-  x1x2 = cbind(x1, x2)
-  both = apply(X = x1x2, MARGIN = 1, FUN = min)
-  yprob = p0 * (both == 0) + p1 * (both == 1)
-  y = rbinom(n = n, size = 1, prob = yprob)
-  return(data.frame(x1, x2, y, both))
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuV0xiaW5hcnlkYXRhIDwtXG5mdW5jdGlvbihuID0gMjAwLCBwMCA9IC4xLCBwMSA9IC41KXtcbiAgeDEgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0gMS8yKVxuICB4MiA9IHJiaW5vbShuID0gbiwgc2l6ZSA9IDEsIHByb2IgPSAxLzIpXG4gIHgxeDIgPSBjYmluZCh4MSwgeDIpXG4gIGJvdGggPSBhcHBseShYID0geDF4MiwgTUFSR0lOID0gMSwgRlVOID0gbWluKVxuICB5cHJvYiA9IHAwICogKGJvdGggPT0gMCkgKyBwMSAqIChib3RoID09IDEpXG4gIHkgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0geXByb2IpXG4gIHJldHVybihkYXRhLmZyYW1lKHgxLCB4MiwgeSwgYm90aCkpXG59XG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r WLbinarydata &lt;- function(n = 200, p0 = .1, p1 = .5){ x1 = rbinom(n = n, size = 1, prob = 1/2) x2 = rbinom(n = n, size = 1, prob = 1/2) x1x2 = cbind(x1, x2) both = apply(X = x1x2, MARGIN = 1, FUN = min) yprob = p0 * (both == 0) + p1 * (both == 1) y = rbinom(n = n, size = 1, prob = yprob) return(data.frame(x1, x2, y, both)) }</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -204,20 +196,9 @@ function(n = 200, p0 = .1, p1 = .5){
 <p>This code is a function that generates random continuous data, rather than binary data with 200 “patients”. Using the phi1 and phi2 equations, along with inverse logit, the minimum phi is calculated for each “patient” and plotted in pairs.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuV0xDb250aW51b3VzZGF0YSA8LVxuZnVuY3Rpb24obiA9IDIwMCwgcDAgPSAuMSwgcDEgPSAuNSwgYTEgPSAxLCBhMiA9IDIsIGIxID0gMSwgYjIgPSAyKXtcbiAgeDEgPSBybm9ybShuID0gbilcbiAgeDIgPSBybm9ybShuID0gbilcbiAgeDF4MiA9IGNiaW5kKHgxLCB4MilcbiAgcGhpMSA9IGExICsgYjEgKiB4MVxuICBwaGkyID0gYTIgKyBiMiAqIHgyXG4gIHBoaTFwaGkyID0gY2JpbmQocGhpMSwgcGhpMilcbiAgbWlucGhpID0gYXBwbHkoWCA9IHBoaTFwaGkyLCBNQVJHSU4gPSAxLCBGVU4gPSBtaW4pXG4gIHlwcm9iID0gaW52ZXJzZWxvZ2l0KG1pbnBoaSlcbiAgeSA9IHJiaW5vbShuID0gbiwgc2l6ZSA9IDEsIHByb2IgPSB5cHJvYilcbiAgcmV0dXJuKGRhdGEuZnJhbWUoeDEsIHgyLCB5LCBtaW5waGkpKVxufVxuYGBgIn0= -->
-<pre class="r"><code>WLContinuousdata &lt;-
-function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
-  x1 = rnorm(n = n)
-  x2 = rnorm(n = n)
-  x1x2 = cbind(x1, x2)
-  phi1 = a1 + b1 * x1
-  phi2 = a2 + b2 * x2
-  phi1phi2 = cbind(phi1, phi2)
-  minphi = apply(X = phi1phi2, MARGIN = 1, FUN = min)
-  yprob = inverselogit(minphi)
-  y = rbinom(n = n, size = 1, prob = yprob)
-  return(data.frame(x1, x2, y, minphi))
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuV0xDb250aW51b3VzZGF0YSA8LVxuZnVuY3Rpb24obiA9IDIwMCwgcDAgPSAuMSwgcDEgPSAuNSwgYTEgPSAxLCBhMiA9IDIsIGIxID0gMSwgYjIgPSAyKXtcbiAgeDEgPSBybm9ybShuID0gbilcbiAgeDIgPSBybm9ybShuID0gbilcbiAgeDF4MiA9IGNiaW5kKHgxLCB4MilcbiAgcGhpMSA9IGExICsgYjEgKiB4MVxuICBwaGkyID0gYTIgKyBiMiAqIHgyXG4gIHBoaTFwaGkyID0gY2JpbmQocGhpMSwgcGhpMilcbiAgbWlucGhpID0gYXBwbHkoWCA9IHBoaTFwaGkyLCBNQVJHSU4gPSAxLCBGVU4gPSBtaW4pXG4gIHlwcm9iID0gaW52ZXJzZWxvZ2l0KG1pbnBoaSlcbiAgeSA9IHJiaW5vbShuID0gbiwgc2l6ZSA9IDEsIHByb2IgPSB5cHJvYilcbiAgcmV0dXJuKGRhdGEuZnJhbWUoeDEsIHgyLCB5LCBtaW5waGkpKVxufVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r WLContinuousdata &lt;- function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){ x1 = rnorm(n = n) x2 = rnorm(n = n) x1x2 = cbind(x1, x2) phi1 = a1 + b1 * x1 phi2 = a2 + b2 * x2 phi1phi2 = cbind(phi1, phi2) minphi = apply(X = phi1phi2, MARGIN = 1, FUN = min) yprob = inverselogit(minphi) y = rbinom(n = n, size = 1, prob = yprob) return(data.frame(x1, x2, y, minphi)) }</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -227,21 +208,9 @@ function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
 <p>This code is a function that simulates the likelihood function using the phi and inverse logit equations from eariler in the program.The phis are generated based on a1,a2,b1, and b2 from the argument and the minimum is put into the likelihood equation.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTGlrZWx5ZGF0YSA8LVxuZnVuY3Rpb24oZGF0YSA9IHRlbXAsIGExID0gMSwgYTIgPSAyLCBiMSA9IDEsIGIyID0gMiwgYTFhMmIxYjIpe1xuICBpZighbWlzc2luZyhhMWEyYjFiMikpe1xuICAgIGExID0gYTFhMmIxYjIkYTFcbiAgICBhMiA9IGExYTJiMWIyJGEyXG4gICAgYjEgPSBhMWEyYjFiMiRiMVxuICAgIGIyID0gYTFhMmIxYjIkYjJcbiAgfVxuICBwaGlqMSA9IGludmVyc2Vsb2dpdChhMSArIGIxICogZGF0YSR4MSlcbiAgcGhpajIgPSBpbnZlcnNlbG9naXQoYTIgKyBiMiAqIGRhdGEkeDIpXG4gIHBoaWoxcGhpajIgPSBjYmluZChwaGlqMSwgcGhpajIpXG4gIG1pbnBoaWogPSBhcHBseShYID0gcGhpajFwaGlqMiwgTUFSR0lOID0gMSwgRlVOID0gbWluKVxuICByZXR1cm4oc3VtKGRhdGEkeSpsb2cobWlucGhpaikgKyAoMSAtIGRhdGEkeSkgKiBsb2coMSAtIG1pbnBoaWopKSlcbn1cbmBgYCJ9 -->
-<pre class="r"><code>Likelydata &lt;-
-function(data = temp, a1 = 1, a2 = 2, b1 = 1, b2 = 2, a1a2b1b2){
-  if(!missing(a1a2b1b2)){
-    a1 = a1a2b1b2$a1
-    a2 = a1a2b1b2$a2
-    b1 = a1a2b1b2$b1
-    b2 = a1a2b1b2$b2
-  }
-  phij1 = inverselogit(a1 + b1 * data$x1)
-  phij2 = inverselogit(a2 + b2 * data$x2)
-  phij1phij2 = cbind(phij1, phij2)
-  minphij = apply(X = phij1phij2, MARGIN = 1, FUN = min)
-  return(sum(data$y*log(minphij) + (1 - data$y) * log(1 - minphij)))
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuTGlrZWx5ZGF0YSA8LVxuZnVuY3Rpb24oZGF0YSA9IHRlbXAsIGExID0gMSwgYTIgPSAyLCBiMSA9IDEsIGIyID0gMiwgYTFhMmIxYjIpe1xuICBpZighbWlzc2luZyhhMWEyYjFiMikpe1xuICAgIGExID0gYTFhMmIxYjIkYTFcbiAgICBhMiA9IGExYTJiMWIyJGEyXG4gICAgYjEgPSBhMWEyYjFiMiRiMVxuICAgIGIyID0gYTFhMmIxYjIkYjJcbiAgfVxuICBwaGlqMSA9IGludmVyc2Vsb2dpdChhMSArIGIxICogZGF0YSR4MSlcbiAgcGhpajIgPSBpbnZlcnNlbG9naXQoYTIgKyBiMiAqIGRhdGEkeDIpXG4gIHBoaWoxcGhpajIgPSBjYmluZChwaGlqMSwgcGhpajIpXG4gIG1pbnBoaWogPSBhcHBseShYID0gcGhpajFwaGlqMiwgTUFSR0lOID0gMSwgRlVOID0gbWluKVxuICByZXR1cm4oc3VtKGRhdGEkeSpsb2cobWlucGhpaikgKyAoMSAtIGRhdGEkeSkgKiBsb2coMSAtIG1pbnBoaWopKSlcbn1cbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r Likelydata &lt;- function(data = temp, a1 = 1, a2 = 2, b1 = 1, b2 = 2, a1a2b1b2){ if(!missing(a1a2b1b2)){ a1 = a1a2b1b2<span class="math inline">\(a1  a2 = a1a2b1b2\)</span>a2 b1 = a1a2b1b2<span class="math inline">\(b1  b2 = a1a2b1b2\)</span>b2 } phij1 = inverselogit(a1 + b1 * data<span class="math inline">\(x1)  phij2 = inverselogit(a2 + b2 * data\)</span>x2) phij1phij2 = cbind(phij1, phij2) minphij = apply(X = phij1phij2, MARGIN = 1, FUN = min) return(sum(data<span class="math inline">\(y*log(minphij) + (1 - data\)</span>y) * log(1 - minphij))) }</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -250,15 +219,10 @@ function(data = temp, a1 = 1, a2 = 2, b1 = 1, b2 = 2, a1a2b1b2){
 <p>The a1 and a2 seqs are then generated, and the a1 seq is plotted at the x axis against the Likely values for one dimension in a curve of optimal use.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuTGlrZWx5ZGF0YSgpXG5hMXNlcSA9IHNlcSgwLDIsbGVuZ3RoID0gMTAwKVxuYTJzZXEgPSBzZXEoMCw0LGxlbmd0aCA9IDEwMClcblxuTHZhbHVlcyA9IHNhcHBseShhMXNlcSwgTGlrZWx5ZGF0YSwgZGF0YSA9IHRlbXApXG5wbG90KGExc2VxLCBMdmFsdWVzLCB0eXBlID0gXCJsXCIpXG5hYmxpbmUodiA9IGExc2VxW3doaWNoLm1heChMdmFsdWVzKV0pXG5hYmxpbmUoaCA9IG1heChMdmFsdWVzKSlcbmBgYCJ9 -->
-<pre class="r"><code>Likelydata()
-a1seq = seq(0,2,length = 100)
-a2seq = seq(0,4,length = 100)
-
-Lvalues = sapply(a1seq, Likelydata, data = temp)
-plot(a1seq, Lvalues, type = &quot;l&quot;)
-abline(v = a1seq[which.max(Lvalues)])
-abline(h = max(Lvalues))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuTGlrZWx5ZGF0YSgpXG5hMXNlcSA9IHNlcSgwLDIsbGVuZ3RoID0gMTAwKVxuYTJzZXEgPSBzZXEoMCw0LGxlbmd0aCA9IDEwMClcblxuTHZhbHVlcyA9IHNhcHBseShhMXNlcSwgTGlrZWx5ZGF0YSwgZGF0YSA9IHRlbXApXG5wbG90KGExc2VxLCBMdmFsdWVzLCB0eXBlID0gXFxsXFwpXG5hYmxpbmUodiA9IGExc2VxW3doaWNoLm1heChMdmFsdWVzKV0pXG5hYmxpbmUoaCA9IG1heChMdmFsdWVzKSlcbmBgYFxuYGBgIn0= -->
+<p><code>r</code>r Likelydata() a1seq = seq(0,2,length = 100) a2seq = seq(0,4,length = 100)</p>
+<p>Lvalues = sapply(a1seq, Likelydata, data = temp) plot(a1seq, Lvalues, type = ) abline(v = a1seq[which.max(Lvalues)]) abline(h = max(Lvalues))</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -269,20 +233,9 @@ abline(h = max(Lvalues))</code></pre>
 <p>This code is a function in which a multi-dimensional contour is generated based on the a1seq, a2seq, and Lvalues. The Lvalues are then taken with the continuous data function and the maximum likelihood is found and plotted in the middle of the contour based on the Lvalues row and column maximizer.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVHdvX0RpbWVuc2lvbmFsID0gZnVuY3Rpb24oKXtcbiAgYTFhMmdyaWQgPSBleHBhbmQuZ3JpZChhMXNlcSwgYTJzZXEpXG4gIEx2YWx1ZXMgPSBhcHBseShhMWEyZ3JpZCwgMSwgZnVuY3Rpb24ocm93KXtMaWtlbHlkYXRhKGExID0gcm93WzFdLCBhMiA9IHJvd1syXSl9KVxuICBMdmFsdWVzID0gbWF0cml4KEx2YWx1ZXMsIG5yb3cgPSAxMDApXG4gIGNvbnRvdXIuZGVmYXVsdCh4ID0gYTFzZXEsIHkgPWEyc2VxLCB6ID0gTHZhbHVlcylcbiAgYXJncyhXTENvbnRpbnVvdXNkYXRhKVxuICBwb2ludHMoMSwgMiwgY29sID0gXCJncmVlblwiLCBwY2ggPSBcInhcIiwgY2V4ID0gMilcbiAgbWF4aW1pemVyID0gd2hpY2gobWF4KEx2YWx1ZXMpID09IEx2YWx1ZXMpXG4gIHJtYXggPSByb3coTHZhbHVlcylbbWF4aW1pemVyXVxuICBjbWF4ID0gY29sKEx2YWx1ZXMpW21heGltaXplcl1cbiAgcG9pbnRzKGExc2VxW3JtYXhdLCBhMnNlcVtjbWF4XSwgY29sID0gXCJyZWRcIiwgcGNoID0gXCJvXCIsIGNleCA9IDQpXG4gIHJldHVybihjKG1heGltdW0gPSBtYXgoTHZhbHVlcyksIGExbWF4aW1pemVyID0gYTFzZXFbcm1heF0sIGEybWF4aW1pemVyID0gYTJzZXFbY21heF0pKVxufVxuYGBgIn0= -->
-<pre class="r"><code>Two_Dimensional = function(){
-  a1a2grid = expand.grid(a1seq, a2seq)
-  Lvalues = apply(a1a2grid, 1, function(row){Likelydata(a1 = row[1], a2 = row[2])})
-  Lvalues = matrix(Lvalues, nrow = 100)
-  contour.default(x = a1seq, y =a2seq, z = Lvalues)
-  args(WLContinuousdata)
-  points(1, 2, col = &quot;green&quot;, pch = &quot;x&quot;, cex = 2)
-  maximizer = which(max(Lvalues) == Lvalues)
-  rmax = row(Lvalues)[maximizer]
-  cmax = col(Lvalues)[maximizer]
-  points(a1seq[rmax], a2seq[cmax], col = &quot;red&quot;, pch = &quot;o&quot;, cex = 4)
-  return(c(maximum = max(Lvalues), a1maximizer = a1seq[rmax], a2maximizer = a2seq[cmax]))
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuVHdvX0RpbWVuc2lvbmFsID0gZnVuY3Rpb24oKXtcbiAgYTFhMmdyaWQgPSBleHBhbmQuZ3JpZChhMXNlcSwgYTJzZXEpXG4gIEx2YWx1ZXMgPSBhcHBseShhMWEyZ3JpZCwgMSwgZnVuY3Rpb24ocm93KXtMaWtlbHlkYXRhKGExID0gcm93WzFdLCBhMiA9IHJvd1syXSl9KVxuICBMdmFsdWVzID0gbWF0cml4KEx2YWx1ZXMsIG5yb3cgPSAxMDApXG4gIGNvbnRvdXIuZGVmYXVsdCh4ID0gYTFzZXEsIHkgPWEyc2VxLCB6ID0gTHZhbHVlcylcbiAgYXJncyhXTENvbnRpbnVvdXNkYXRhKVxuICBwb2ludHMoMSwgMiwgY29sID0gXFxncmVlblxcLCBwY2ggPSBcXHhcXCwgY2V4ID0gMilcbiAgbWF4aW1pemVyID0gd2hpY2gobWF4KEx2YWx1ZXMpID09IEx2YWx1ZXMpXG4gIHJtYXggPSByb3coTHZhbHVlcylbbWF4aW1pemVyXVxuICBjbWF4ID0gY29sKEx2YWx1ZXMpW21heGltaXplcl1cbiAgcG9pbnRzKGExc2VxW3JtYXhdLCBhMnNlcVtjbWF4XSwgY29sID0gXFxyZWRcXCwgcGNoID0gXFxvXFwsIGNleCA9IDQpXG4gIHJldHVybihjKG1heGltdW0gPSBtYXgoTHZhbHVlcyksIGExbWF4aW1pemVyID0gYTFzZXFbcm1heF0sIGEybWF4aW1pemVyID0gYTJzZXFbY21heF0pKVxufVxuYGBgXG5gYGAifQ== -->
+<p><code>r</code>r Two_Dimensional = function(){ a1a2grid = expand.grid(a1seq, a2seq) Lvalues = apply(a1a2grid, 1, function(row){Likelydata(a1 = row[1], a2 = row[2])}) Lvalues = matrix(Lvalues, nrow = 100) contour.default(x = a1seq, y =a2seq, z = Lvalues) args(WLContinuousdata) points(1, 2, col = , pch = , cex = 2) maximizer = which(max(Lvalues) == Lvalues) rmax = row(Lvalues)[maximizer] cmax = col(Lvalues)[maximizer] points(a1seq[rmax], a2seq[cmax], col = , pch = , cex = 4) return(c(maximum = max(Lvalues), a1maximizer = a1seq[rmax], a2maximizer = a2seq[cmax])) }</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -292,78 +245,30 @@ abline(h = max(Lvalues))</code></pre>
 <p>Each dimension is given a function that changes its value from the original starting vector after it moves. A green circle starts off in a random vector and moves along each dimension in order to find a more accurate maximum likelihood than the on previously found. The Result is then plotted in pairs and returned to the user.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuQTFfVmFyaWVzID0gZnVuY3Rpb24oYTEpe1xuICBMaWtlbHlkYXRhKGExID0gYTEsIFxuICAgICAgICAgICAgIGIxID0gc3RhcnRpbmdfdmVjdG9yJGIxLCBcbiAgICAgICAgICAgICBhMiA9IHN0YXJ0aW5nX3ZlY3RvciRhMiwgXG4gICAgICAgICAgICAgYjIgPSBzdGFydGluZ192ZWN0b3IkYjIpXG59XG5BMl9WYXJpZXMgPSBmdW5jdGlvbihhMil7XG4gIExpa2VseWRhdGEoYTEgPSBzdGFydGluZ192ZWN0b3IkYTEsIFxuICAgICAgICAgICAgIGIxID0gc3RhcnRpbmdfdmVjdG9yJGIxLCBcbiAgICAgICAgICAgICBhMiA9IGEyLCBcbiAgICAgICAgICAgICBiMiA9IHN0YXJ0aW5nX3ZlY3RvciRiMilcbn1cbkIxX1ZhcmllcyA9IGZ1bmN0aW9uKGIxKXtcbiAgTGlrZWx5ZGF0YShiMSA9IGIxLCBcbiAgICAgICAgICAgICBhMSA9IHN0YXJ0aW5nX3ZlY3RvciRhMSwgXG4gICAgICAgICAgICAgYTIgPSBzdGFydGluZ192ZWN0b3IkYTIsIFxuICAgICAgICAgICAgIGIyID0gc3RhcnRpbmdfdmVjdG9yJGIyKVxufVxuQjJfVmFyaWVzID0gZnVuY3Rpb24oYjIpe1xuICBMaWtlbHlkYXRhKGExID0gc3RhcnRpbmdfdmVjdG9yJGExLCBcbiAgICAgICAgICAgICBiMSA9IHN0YXJ0aW5nX3ZlY3RvciRiMSwgXG4gICAgICAgICAgICAgYjIgPSBiMiwgXG4gICAgICAgICAgICAgYTIgPSBzdGFydGluZ192ZWN0b3IkYTIpXG59XG5Db25NYXhTdGVwID0gZnVuY3Rpb24oKXtcbiAgbmV3YTEgPSBvcHRpbWl6ZShmID0gQTFfVmFyaWVzLCBpbnRlcnZhbCA9IGMoMCwyKSwgbWF4aW11bSA9IFRSVUUpJG1heGltdW1cbiAgc3RhcnRpbmdfdmVjdG9yJGExIDw8LSBuZXdhMVxuICBuZXdhMiA9IG9wdGltaXplKGYgPSBBMl9WYXJpZXMsIGludGVydmFsID0gYygwLDIpLCBtYXhpbXVtID0gVFJVRSkkbWF4aW11bVxuICBzdGFydGluZ192ZWN0b3IkYTIgPDwtIG5ld2EyXG4gIG5ld2IxID0gb3B0aW1pemUoZiA9IEIxX1ZhcmllcywgaW50ZXJ2YWwgPSBjKDAsMiksIG1heGltdW0gPSBUUlVFKSRtYXhpbXVtXG4gIHN0YXJ0aW5nX3ZlY3RvciRiMSA8PC0gbmV3YjFcbiAgbmV3YjIgPSBvcHRpbWl6ZShmID0gQjJfVmFyaWVzLCBpbnRlcnZhbCA9IGMoMCwyKSwgbWF4aW11bSA9IFRSVUUpJG1heGltdW1cbiAgc3RhcnRpbmdfdmVjdG9yJGIyIDw8LSBuZXdiMlxuICByZXR1cm4oYyhtYXhpbXVtID0gTGlrZWx5ZGF0YShhMWEyYjFiMiA9IHN0YXJ0aW5nX3ZlY3RvciksIFxuICAgICAgICAgICBhMW1heGltaXplciA9IG5ld2ExLCBcbiAgICAgICAgICAgYTJtYXhpbWl6ZXIgPSBuZXdhMixcbiAgICAgICAgICAgYjFtYXhpbWl6ZXIgPSBuZXdiMSwgXG4gICAgICAgICAgIGIybWF4aW1pemVyID0gbmV3YjIpKVxufVxuQ29uTWF4ID0gZnVuY3Rpb24odG9sID0gMWUtNywgXG4gICAgICAgICAgICAgICAgICBzdGFydGluZ192ZWN0b3IgPSBsaXN0KGExID0gMSwgYTIgPSAzLCBiMSA9IDAsIGIyID0gMSlcbil7XG4gIHN0YXJ0aW5nX3ZlY3RvciA8PC0gc3RhcnRpbmdfdmVjdG9yXG4gIHNob3VsZHN0b3AgPSBGQUxTRVxuICBSZXN1bHRzID0gTlVMTFxuICB3aGlsZShzaG91bGRzdG9wID09IEZBTFNFKXtcbiAgICBUZW1wID0gQ29uTWF4U3RlcCgpXG4gICAgaWYoaXMubnVsbChSZXN1bHRzKSl7XG4gICAgICBSZXN1bHRzID0gdChhcy5kYXRhLmZyYW1lKFRlbXApKVxuICAgIH1cbiAgICBlbHNle1xuICAgICAgUmVzdWx0cyA9IHJiaW5kKFJlc3VsdHMsIFRlbXApXG4gICAgICBEZWx0YSA9IFJlc3VsdHNbbnJvdyhSZXN1bHRzKSwgXCJtYXhpbXVtXCJdIC1cbiAgICAgICAgUmVzdWx0c1tucm93KFJlc3VsdHMpIC0gMSwgXCJtYXhpbXVtXCJdXG4gICAgICBpZihEZWx0YSA8IHRvbCl7XG4gICAgICAgIHNob3VsZHN0b3AgPSBUUlVFXG4gICAgICB9XG4gICAgfVxuICB9XG4gIHJldHVybihSZXN1bHRzKVxufVxuQ29uTWF4UmVzdWx0ID0gQ29uTWF4KHRvbCA9IDFlLTkpXG5wYWlycyhDb25NYXhSZXN1bHQpXG5gYGAifQ== -->
-<pre class="r"><code>A1_Varies = function(a1){
-  Likelydata(a1 = a1, 
-             b1 = starting_vector$b1, 
-             a2 = starting_vector$a2, 
-             b2 = starting_vector$b2)
-}
-A2_Varies = function(a2){
-  Likelydata(a1 = starting_vector$a1, 
-             b1 = starting_vector$b1, 
-             a2 = a2, 
-             b2 = starting_vector$b2)
-}
-B1_Varies = function(b1){
-  Likelydata(b1 = b1, 
-             a1 = starting_vector$a1, 
-             a2 = starting_vector$a2, 
-             b2 = starting_vector$b2)
-}
-B2_Varies = function(b2){
-  Likelydata(a1 = starting_vector$a1, 
-             b1 = starting_vector$b1, 
-             b2 = b2, 
-             a2 = starting_vector$a2)
-}
-ConMaxStep = function(){
-  newa1 = optimize(f = A1_Varies, interval = c(0,2), maximum = TRUE)$maximum
-  starting_vector$a1 &lt;&lt;- newa1
-  newa2 = optimize(f = A2_Varies, interval = c(0,2), maximum = TRUE)$maximum
-  starting_vector$a2 &lt;&lt;- newa2
-  newb1 = optimize(f = B1_Varies, interval = c(0,2), maximum = TRUE)$maximum
-  starting_vector$b1 &lt;&lt;- newb1
-  newb2 = optimize(f = B2_Varies, interval = c(0,2), maximum = TRUE)$maximum
-  starting_vector$b2 &lt;&lt;- newb2
-  return(c(maximum = Likelydata(a1a2b1b2 = starting_vector), 
-           a1maximizer = newa1, 
-           a2maximizer = newa2,
-           b1maximizer = newb1, 
-           b2maximizer = newb2))
-}
-ConMax = function(tol = 1e-7, 
-                  starting_vector = list(a1 = 1, a2 = 3, b1 = 0, b2 = 1)
-){
-  starting_vector &lt;&lt;- starting_vector
-  shouldstop = FALSE
-  Results = NULL
-  while(shouldstop == FALSE){
-    Temp = ConMaxStep()
-    if(is.null(Results)){
-      Results = t(as.data.frame(Temp))
-    }
-    else{
-      Results = rbind(Results, Temp)
-      Delta = Results[nrow(Results), &quot;maximum&quot;] -
-        Results[nrow(Results) - 1, &quot;maximum&quot;]
-      if(Delta &lt; tol){
-        shouldstop = TRUE
-      }
-    }
-  }
-  return(Results)
-}
-ConMaxResult = ConMax(tol = 1e-9)
-pairs(ConMaxResult)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuQTFfVmFyaWVzID0gZnVuY3Rpb24oYTEpe1xuICBMaWtlbHlkYXRhKGExID0gYTEsIFxuICAgICAgICAgICAgIGIxID0gc3RhcnRpbmdfdmVjdG9yJGIxLCBcbiAgICAgICAgICAgICBhMiA9IHN0YXJ0aW5nX3ZlY3RvciRhMiwgXG4gICAgICAgICAgICAgYjIgPSBzdGFydGluZ192ZWN0b3IkYjIpXG59XG5BMl9WYXJpZXMgPSBmdW5jdGlvbihhMil7XG4gIExpa2VseWRhdGEoYTEgPSBzdGFydGluZ192ZWN0b3IkYTEsIFxuICAgICAgICAgICAgIGIxID0gc3RhcnRpbmdfdmVjdG9yJGIxLCBcbiAgICAgICAgICAgICBhMiA9IGEyLCBcbiAgICAgICAgICAgICBiMiA9IHN0YXJ0aW5nX3ZlY3RvciRiMilcbn1cbkIxX1ZhcmllcyA9IGZ1bmN0aW9uKGIxKXtcbiAgTGlrZWx5ZGF0YShiMSA9IGIxLCBcbiAgICAgICAgICAgICBhMSA9IHN0YXJ0aW5nX3ZlY3RvciRhMSwgXG4gICAgICAgICAgICAgYTIgPSBzdGFydGluZ192ZWN0b3IkYTIsIFxuICAgICAgICAgICAgIGIyID0gc3RhcnRpbmdfdmVjdG9yJGIyKVxufVxuQjJfVmFyaWVzID0gZnVuY3Rpb24oYjIpe1xuICBMaWtlbHlkYXRhKGExID0gc3RhcnRpbmdfdmVjdG9yJGExLCBcbiAgICAgICAgICAgICBiMSA9IHN0YXJ0aW5nX3ZlY3RvciRiMSwgXG4gICAgICAgICAgICAgYjIgPSBiMiwgXG4gICAgICAgICAgICAgYTIgPSBzdGFydGluZ192ZWN0b3IkYTIpXG59XG5Db25NYXhTdGVwID0gZnVuY3Rpb24oKXtcbiAgbmV3YTEgPSBvcHRpbWl6ZShmID0gQTFfVmFyaWVzLCBpbnRlcnZhbCA9IGMoMCwyKSwgbWF4aW11bSA9IFRSVUUpJG1heGltdW1cbiAgc3RhcnRpbmdfdmVjdG9yJGExIDw8LSBuZXdhMVxuICBuZXdhMiA9IG9wdGltaXplKGYgPSBBMl9WYXJpZXMsIGludGVydmFsID0gYygwLDIpLCBtYXhpbXVtID0gVFJVRSkkbWF4aW11bVxuICBzdGFydGluZ192ZWN0b3IkYTIgPDwtIG5ld2EyXG4gIG5ld2IxID0gb3B0aW1pemUoZiA9IEIxX1ZhcmllcywgaW50ZXJ2YWwgPSBjKDAsMiksIG1heGltdW0gPSBUUlVFKSRtYXhpbXVtXG4gIHN0YXJ0aW5nX3ZlY3RvciRiMSA8PC0gbmV3YjFcbiAgbmV3YjIgPSBvcHRpbWl6ZShmID0gQjJfVmFyaWVzLCBpbnRlcnZhbCA9IGMoMCwyKSwgbWF4aW11bSA9IFRSVUUpJG1heGltdW1cbiAgc3RhcnRpbmdfdmVjdG9yJGIyIDw8LSBuZXdiMlxuICByZXR1cm4oYyhtYXhpbXVtID0gTGlrZWx5ZGF0YShhMWEyYjFiMiA9IHN0YXJ0aW5nX3ZlY3RvciksIFxuICAgICAgICAgICBhMW1heGltaXplciA9IG5ld2ExLCBcbiAgICAgICAgICAgYTJtYXhpbWl6ZXIgPSBuZXdhMixcbiAgICAgICAgICAgYjFtYXhpbWl6ZXIgPSBuZXdiMSwgXG4gICAgICAgICAgIGIybWF4aW1pemVyID0gbmV3YjIpKVxufVxuQ29uTWF4ID0gZnVuY3Rpb24odG9sID0gMWUtNywgXG4gICAgICAgICAgICAgICAgICBzdGFydGluZ192ZWN0b3IgPSBsaXN0KGExID0gMSwgYTIgPSAzLCBiMSA9IDAsIGIyID0gMSlcbil7XG4gIHN0YXJ0aW5nX3ZlY3RvciA8PC0gc3RhcnRpbmdfdmVjdG9yXG4gIHNob3VsZHN0b3AgPSBGQUxTRVxuICBSZXN1bHRzID0gTlVMTFxuICB3aGlsZShzaG91bGRzdG9wID09IEZBTFNFKXtcbiAgICBUZW1wID0gQ29uTWF4U3RlcCgpXG4gICAgaWYoaXMubnVsbChSZXN1bHRzKSl7XG4gICAgICBSZXN1bHRzID0gdChhcy5kYXRhLmZyYW1lKFRlbXApKVxuICAgIH1cbiAgICBlbHNle1xuICAgICAgUmVzdWx0cyA9IHJiaW5kKFJlc3VsdHMsIFRlbXApXG4gICAgICBEZWx0YSA9IFJlc3VsdHNbbnJvdyhSZXN1bHRzKSwgXFxtYXhpbXVtXFxdIC1cbiAgICAgICAgUmVzdWx0c1tucm93KFJlc3VsdHMpIC0gMSwgXFxtYXhpbXVtXFxdXG4gICAgICBpZihEZWx0YSA8IHRvbCl7XG4gICAgICAgIHNob3VsZHN0b3AgPSBUUlVFXG4gICAgICB9XG4gICAgfVxuICB9XG4gIHJldHVybihSZXN1bHRzKVxufVxuQ29uTWF4UmVzdWx0ID0gQ29uTWF4KHRvbCA9IDFlLTkpXG5wYWlycyhDb25NYXhSZXN1bHQpXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r A1_Varies = function(a1){ Likelydata(a1 = a1, b1 = starting_vector<span class="math inline">\(b1,  a2 = starting_vector\)</span>a2, b2 = starting_vector<span class="math inline">\(b2) } A2_Varies = function(a2){  Likelydata(a1 = starting_vector\)</span>a1, b1 = starting_vector<span class="math inline">\(b1,  a2 = a2,  b2 = starting_vector\)</span>b2) } B1_Varies = function(b1){ Likelydata(b1 = b1, a1 = starting_vector<span class="math inline">\(a1,  a2 = starting_vector\)</span>a2, b2 = starting_vector<span class="math inline">\(b2) } B2_Varies = function(b2){  Likelydata(a1 = starting_vector\)</span>a1, b1 = starting_vector<span class="math inline">\(b1,  b2 = b2,  a2 = starting_vector\)</span>a2) } ConMaxStep = function(){ newa1 = optimize(f = A1_Varies, interval = c(0,2), maximum = TRUE)<span class="math inline">\(maximum  starting_vector\)</span>a1 &lt;&lt;- newa1 newa2 = optimize(f = A2_Varies, interval = c(0,2), maximum = TRUE)<span class="math inline">\(maximum  starting_vector\)</span>a2 &lt;&lt;- newa2 newb1 = optimize(f = B1_Varies, interval = c(0,2), maximum = TRUE)<span class="math inline">\(maximum  starting_vector\)</span>b1 &lt;&lt;- newb1 newb2 = optimize(f = B2_Varies, interval = c(0,2), maximum = TRUE)<span class="math inline">\(maximum  starting_vector\)</span>b2 &lt;&lt;- newb2 return(c(maximum = Likelydata(a1a2b1b2 = starting_vector), a1maximizer = newa1, a2maximizer = newa2, b1maximizer = newb1, b2maximizer = newb2)) } ConMax = function(tol = 1e-7, starting_vector = list(a1 = 1, a2 = 3, b1 = 0, b2 = 1) ){ starting_vector &lt;&lt;- starting_vector shouldstop = FALSE Results = NULL while(shouldstop == FALSE){ Temp = ConMaxStep() if(is.null(Results)){ Results = t(as.data.frame(Temp)) } else{ Results = rbind(Results, Temp) Delta = Results[nrow(Results), ] - Results[nrow(Results) - 1, ] if(Delta &lt; tol){ shouldstop = TRUE } } } return(Results) } ConMaxResult = ConMax(tol = 1e-9) pairs(ConMaxResult)</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<div id="plotting-the-line-of-efficient-use" class="section level4">
+<h4>Plotting the Line of Efficient Use</h4>
+<p>This first piece of code is used to generate random points on a plot using the x1 and x2 variables. The slope of the plot will then be plotted based on the location of the plot and its points, and the lines of efficeint use (The “L” shapes) will be plotted based on the slope.</p>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuUGxvdHBvaW50cyA9IGZ1bmN0aW9uKHIxLCByMiwgZDEsIGQyKXtcbiAgeDIgPSBybm9ybSgyMCwgMiwgMSlcbiAgcGxvdCh4MilcbiAgcG9pbnRzID0gbGlzdCh4Milcbn1cbmBgYCJ9 -->
+<pre class="r"><code>Plotpoints = function(r1, r2, d1, d2){
+  x2 = rnorm(20, 2, 1)
+  plot(x2)
+  points = list(x2)
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+</div>
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkxhYiBOb3RlYm9vayINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQojSW50cm8NClRoaXMgcHJvamVjdCBpcyBhIGNvbGxhYm9yYXRpb24gYmV0d2VlbiBteXNlbGYgYW5kIERyLiBSb2dlciBEYXkgYXMgd2Ugb2JzZXJ2ZSB0aGUgV2Vha2VzdCBMaW5rIE1vZGVsIGFuZCBpdHMgcmVsYXRpb24gdG8gYmlvbWV0cmljcy4gIFNvIGZhciwgd2UgaGF2ZSBwbG90dGVkIHdpdGggYmluYXJ5IGFuZCBjb250aW51b3VzIGRhdGEgYW5kIHBsb3R0ZWQgdXNpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb24uICBUaGlzIGZ1bmN0aW9uIHdhcyB1c2VkIHRvIHBsb3QgY29udG91cnMgdGhhdCB3ZXJlIHVzZWQgdG8gZmluZCB0aGUgbW9zdCBsaWtlbHkgdmFsdWVzIGluIGEgZ2l2ZW4gZGF0YSBzZXQuICBGb3Igbm93IHRoZSBkYXRhIGluIHRoZSBwbG90cyBpcyBzeW50aGV0aWMsIGJ1dCB3ZSB3aWxsIHNvb24gdXNlIHJlYWwtd29ybGQgZ2VuZXRpYyBkYXRhIGluIHBsb3RzLiANCg0KDQojIyNXTGJpbmFyeWRhdGENClRoaXMgY29kZSBpcyBhIGZ1bmN0aW9uIHRoYXQgZ2VuZXJhdGVzIHJhbmRvbSBiaW5hcnkgZGF0YSB3aXRoIDIwMCAicGF0aWVudHMiLCBjaGVja3MgdGhlIG1pbmltdW0gdmFsdWUgb2YgZWFjaCBwYXRpZW50KGVpdGhlciAwIG9yIDEpLCBhbmQgcGxvdHMgZWFjaCAicGF0aWVudCIgaW4gcGFpcnMgYmFzZWQgb24gdGhhdCB2YWx1ZS4NCmBgYHtyfQ0KV0xiaW5hcnlkYXRhIDwtDQpmdW5jdGlvbihuID0gMjAwLCBwMCA9IC4xLCBwMSA9IC41KXsNCiAgeDEgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0gMS8yKQ0KICB4MiA9IHJiaW5vbShuID0gbiwgc2l6ZSA9IDEsIHByb2IgPSAxLzIpDQogIHgxeDIgPSBjYmluZCh4MSwgeDIpDQogIGJvdGggPSBhcHBseShYID0geDF4MiwgTUFSR0lOID0gMSwgRlVOID0gbWluKQ0KICB5cHJvYiA9IHAwICogKGJvdGggPT0gMCkgKyBwMSAqIChib3RoID09IDEpDQogIHkgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0geXByb2IpDQogIHJldHVybihkYXRhLmZyYW1lKHgxLCB4MiwgeSwgYm90aCkpDQp9DQpgYGANCg0KIyMjV0xDb250aW51b3VzZGF0YQ0KVGhpcyBjb2RlIGlzIGEgZnVuY3Rpb24gdGhhdCBnZW5lcmF0ZXMgcmFuZG9tIGNvbnRpbnVvdXMgZGF0YSwgcmF0aGVyIHRoYW4gYmluYXJ5IGRhdGEgd2l0aCAyMDAgInBhdGllbnRzIi4gIFVzaW5nIHRoZSBwaGkxIGFuZCBwaGkyIGVxdWF0aW9ucywgYWxvbmcgd2l0aCBpbnZlcnNlIGxvZ2l0LCB0aGUgbWluaW11bSBwaGkgaXMgY2FsY3VsYXRlZCBmb3IgZWFjaCAicGF0aWVudCIgYW5kIHBsb3R0ZWQgaW4gcGFpcnMuDQpgYGB7cn0NCldMQ29udGludW91c2RhdGEgPC0NCmZ1bmN0aW9uKG4gPSAyMDAsIHAwID0gLjEsIHAxID0gLjUsIGExID0gMSwgYTIgPSAyLCBiMSA9IDEsIGIyID0gMil7DQogIHgxID0gcm5vcm0obiA9IG4pDQogIHgyID0gcm5vcm0obiA9IG4pDQogIHgxeDIgPSBjYmluZCh4MSwgeDIpDQogIHBoaTEgPSBhMSArIGIxICogeDENCiAgcGhpMiA9IGEyICsgYjIgKiB4Mg0KICBwaGkxcGhpMiA9IGNiaW5kKHBoaTEsIHBoaTIpDQogIG1pbnBoaSA9IGFwcGx5KFggPSBwaGkxcGhpMiwgTUFSR0lOID0gMSwgRlVOID0gbWluKQ0KICB5cHJvYiA9IGludmVyc2Vsb2dpdChtaW5waGkpDQogIHkgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0geXByb2IpDQogIHJldHVybihkYXRhLmZyYW1lKHgxLCB4MiwgeSwgbWlucGhpKSkNCn0NCmBgYA0KDQojIyNMaWtlbHlkYXRhDQpUaGlzIGNvZGUgaXMgYSBmdW5jdGlvbiB0aGF0IHNpbXVsYXRlcyB0aGUgbGlrZWxpaG9vZCBmdW5jdGlvbiB1c2luZyB0aGUgcGhpIGFuZCBpbnZlcnNlIGxvZ2l0IGVxdWF0aW9ucyBmcm9tIGVhcmlsZXIgaW4gdGhlIHByb2dyYW0uVGhlIHBoaXMgYXJlIGdlbmVyYXRlZCBiYXNlZCBvbiBhMSxhMixiMSwgYW5kIGIyIGZyb20gdGhlIGFyZ3VtZW50IGFuZCB0aGUgbWluaW11bSBpcyBwdXQgaW50byB0aGUgbGlrZWxpaG9vZCBlcXVhdGlvbi4NCg0KYGBge3J9DQpMaWtlbHlkYXRhIDwtDQpmdW5jdGlvbihkYXRhID0gdGVtcCwgYTEgPSAxLCBhMiA9IDIsIGIxID0gMSwgYjIgPSAyLCBhMWEyYjFiMil7DQogIGlmKCFtaXNzaW5nKGExYTJiMWIyKSl7DQogICAgYTEgPSBhMWEyYjFiMiRhMQ0KICAgIGEyID0gYTFhMmIxYjIkYTINCiAgICBiMSA9IGExYTJiMWIyJGIxDQogICAgYjIgPSBhMWEyYjFiMiRiMg0KICB9DQogIHBoaWoxID0gaW52ZXJzZWxvZ2l0KGExICsgYjEgKiBkYXRhJHgxKQ0KICBwaGlqMiA9IGludmVyc2Vsb2dpdChhMiArIGIyICogZGF0YSR4MikNCiAgcGhpajFwaGlqMiA9IGNiaW5kKHBoaWoxLCBwaGlqMikNCiAgbWlucGhpaiA9IGFwcGx5KFggPSBwaGlqMXBoaWoyLCBNQVJHSU4gPSAxLCBGVU4gPSBtaW4pDQogIHJldHVybihzdW0oZGF0YSR5KmxvZyhtaW5waGlqKSArICgxIC0gZGF0YSR5KSAqIGxvZygxIC0gbWlucGhpaikpKQ0KfQ0KYGBgDQoNCiMjIyNQbG90dGluZyBmb3IgTGlrZWx5ZGF0YQ0KVGhlIGExIGFuZCBhMiBzZXFzIGFyZSB0aGVuIGdlbmVyYXRlZCwgYW5kIHRoZSBhMSBzZXEgaXMgcGxvdHRlZCBhdCB0aGUgeCBheGlzIGFnYWluc3QgdGhlIExpa2VseSB2YWx1ZXMgZm9yIG9uZSBkaW1lbnNpb24gaW4gYSBjdXJ2ZSBvZiBvcHRpbWFsIHVzZS4NCmBgYHtyfQ0KTGlrZWx5ZGF0YSgpDQphMXNlcSA9IHNlcSgwLDIsbGVuZ3RoID0gMTAwKQ0KYTJzZXEgPSBzZXEoMCw0LGxlbmd0aCA9IDEwMCkNCg0KTHZhbHVlcyA9IHNhcHBseShhMXNlcSwgTGlrZWx5ZGF0YSwgZGF0YSA9IHRlbXApDQpwbG90KGExc2VxLCBMdmFsdWVzLCB0eXBlID0gImwiKQ0KYWJsaW5lKHYgPSBhMXNlcVt3aGljaC5tYXgoTHZhbHVlcyldKQ0KYWJsaW5lKGggPSBtYXgoTHZhbHVlcykpDQpgYGANCg0KIyMjVHdvX0RpbWVuc2lvbmFsDQpUaGlzIGNvZGUgaXMgYSBmdW5jdGlvbiBpbiB3aGljaCBhIG11bHRpLWRpbWVuc2lvbmFsIGNvbnRvdXIgaXMgZ2VuZXJhdGVkIGJhc2VkIG9uIHRoZSBhMXNlcSwgYTJzZXEsIGFuZCBMdmFsdWVzLiAgVGhlIEx2YWx1ZXMgYXJlIHRoZW4gdGFrZW4gd2l0aCB0aGUgY29udGludW91cyBkYXRhIGZ1bmN0aW9uIGFuZCB0aGUgbWF4aW11bSBsaWtlbGlob29kIGlzIGZvdW5kICBhbmQgcGxvdHRlZCBpbiB0aGUgbWlkZGxlIG9mIHRoZSBjb250b3VyIGJhc2VkIG9uIHRoZSBMdmFsdWVzIHJvdyBhbmQgY29sdW1uIG1heGltaXplci4NCmBgYHtyfQ0KVHdvX0RpbWVuc2lvbmFsID0gZnVuY3Rpb24oKXsNCiAgYTFhMmdyaWQgPSBleHBhbmQuZ3JpZChhMXNlcSwgYTJzZXEpDQogIEx2YWx1ZXMgPSBhcHBseShhMWEyZ3JpZCwgMSwgZnVuY3Rpb24ocm93KXtMaWtlbHlkYXRhKGExID0gcm93WzFdLCBhMiA9IHJvd1syXSl9KQ0KICBMdmFsdWVzID0gbWF0cml4KEx2YWx1ZXMsIG5yb3cgPSAxMDApDQogIGNvbnRvdXIuZGVmYXVsdCh4ID0gYTFzZXEsIHkgPWEyc2VxLCB6ID0gTHZhbHVlcykNCiAgYXJncyhXTENvbnRpbnVvdXNkYXRhKQ0KICBwb2ludHMoMSwgMiwgY29sID0gImdyZWVuIiwgcGNoID0gIngiLCBjZXggPSAyKQ0KICBtYXhpbWl6ZXIgPSB3aGljaChtYXgoTHZhbHVlcykgPT0gTHZhbHVlcykNCiAgcm1heCA9IHJvdyhMdmFsdWVzKVttYXhpbWl6ZXJdDQogIGNtYXggPSBjb2woTHZhbHVlcylbbWF4aW1pemVyXQ0KICBwb2ludHMoYTFzZXFbcm1heF0sIGEyc2VxW2NtYXhdLCBjb2wgPSAicmVkIiwgcGNoID0gIm8iLCBjZXggPSA0KQ0KICByZXR1cm4oYyhtYXhpbXVtID0gbWF4KEx2YWx1ZXMpLCBhMW1heGltaXplciA9IGExc2VxW3JtYXhdLCBhMm1heGltaXplciA9IGEyc2VxW2NtYXhdKSkNCn0NCmBgYA0KIyMjTW9yZSBBY2N1cmF0ZSBNYXhpbXVtIExpa2VsaWhvb2RzDQpFYWNoIGRpbWVuc2lvbiBpcyBnaXZlbiBhIGZ1bmN0aW9uIHRoYXQgY2hhbmdlcyBpdHMgdmFsdWUgZnJvbSB0aGUgb3JpZ2luYWwgc3RhcnRpbmcgdmVjdG9yIGFmdGVyIGl0IG1vdmVzLiAgQSBncmVlbiBjaXJjbGUgc3RhcnRzIG9mZiBpbiBhIHJhbmRvbSB2ZWN0b3IgYW5kIG1vdmVzIGFsb25nIGVhY2ggZGltZW5zaW9uIGluIG9yZGVyIHRvIGZpbmQgYSBtb3JlIGFjY3VyYXRlIG1heGltdW0gbGlrZWxpaG9vZCB0aGFuIHRoZSBvbiBwcmV2aW91c2x5IGZvdW5kLiAgVGhlIFJlc3VsdCBpcyB0aGVuIHBsb3R0ZWQgaW4gIHBhaXJzIGFuZCByZXR1cm5lZCB0byB0aGUgdXNlci4NCg0KYGBge3J9DQpBMV9WYXJpZXMgPSBmdW5jdGlvbihhMSl7DQogIExpa2VseWRhdGEoYTEgPSBhMSwgDQogICAgICAgICAgICAgYjEgPSBzdGFydGluZ192ZWN0b3IkYjEsIA0KICAgICAgICAgICAgIGEyID0gc3RhcnRpbmdfdmVjdG9yJGEyLCANCiAgICAgICAgICAgICBiMiA9IHN0YXJ0aW5nX3ZlY3RvciRiMikNCn0NCkEyX1ZhcmllcyA9IGZ1bmN0aW9uKGEyKXsNCiAgTGlrZWx5ZGF0YShhMSA9IHN0YXJ0aW5nX3ZlY3RvciRhMSwgDQogICAgICAgICAgICAgYjEgPSBzdGFydGluZ192ZWN0b3IkYjEsIA0KICAgICAgICAgICAgIGEyID0gYTIsIA0KICAgICAgICAgICAgIGIyID0gc3RhcnRpbmdfdmVjdG9yJGIyKQ0KfQ0KQjFfVmFyaWVzID0gZnVuY3Rpb24oYjEpew0KICBMaWtlbHlkYXRhKGIxID0gYjEsIA0KICAgICAgICAgICAgIGExID0gc3RhcnRpbmdfdmVjdG9yJGExLCANCiAgICAgICAgICAgICBhMiA9IHN0YXJ0aW5nX3ZlY3RvciRhMiwgDQogICAgICAgICAgICAgYjIgPSBzdGFydGluZ192ZWN0b3IkYjIpDQp9DQpCMl9WYXJpZXMgPSBmdW5jdGlvbihiMil7DQogIExpa2VseWRhdGEoYTEgPSBzdGFydGluZ192ZWN0b3IkYTEsIA0KICAgICAgICAgICAgIGIxID0gc3RhcnRpbmdfdmVjdG9yJGIxLCANCiAgICAgICAgICAgICBiMiA9IGIyLCANCiAgICAgICAgICAgICBhMiA9IHN0YXJ0aW5nX3ZlY3RvciRhMikNCn0NCkNvbk1heFN0ZXAgPSBmdW5jdGlvbigpew0KICBuZXdhMSA9IG9wdGltaXplKGYgPSBBMV9WYXJpZXMsIGludGVydmFsID0gYygwLDIpLCBtYXhpbXVtID0gVFJVRSkkbWF4aW11bQ0KICBzdGFydGluZ192ZWN0b3IkYTEgPDwtIG5ld2ExDQogIG5ld2EyID0gb3B0aW1pemUoZiA9IEEyX1ZhcmllcywgaW50ZXJ2YWwgPSBjKDAsMiksIG1heGltdW0gPSBUUlVFKSRtYXhpbXVtDQogIHN0YXJ0aW5nX3ZlY3RvciRhMiA8PC0gbmV3YTINCiAgbmV3YjEgPSBvcHRpbWl6ZShmID0gQjFfVmFyaWVzLCBpbnRlcnZhbCA9IGMoMCwyKSwgbWF4aW11bSA9IFRSVUUpJG1heGltdW0NCiAgc3RhcnRpbmdfdmVjdG9yJGIxIDw8LSBuZXdiMQ0KICBuZXdiMiA9IG9wdGltaXplKGYgPSBCMl9WYXJpZXMsIGludGVydmFsID0gYygwLDIpLCBtYXhpbXVtID0gVFJVRSkkbWF4aW11bQ0KICBzdGFydGluZ192ZWN0b3IkYjIgPDwtIG5ld2IyDQogIHJldHVybihjKG1heGltdW0gPSBMaWtlbHlkYXRhKGExYTJiMWIyID0gc3RhcnRpbmdfdmVjdG9yKSwgDQogICAgICAgICAgIGExbWF4aW1pemVyID0gbmV3YTEsIA0KICAgICAgICAgICBhMm1heGltaXplciA9IG5ld2EyLA0KICAgICAgICAgICBiMW1heGltaXplciA9IG5ld2IxLCANCiAgICAgICAgICAgYjJtYXhpbWl6ZXIgPSBuZXdiMikpDQp9DQpDb25NYXggPSBmdW5jdGlvbih0b2wgPSAxZS03LCANCiAgICAgICAgICAgICAgICAgIHN0YXJ0aW5nX3ZlY3RvciA9IGxpc3QoYTEgPSAxLCBhMiA9IDMsIGIxID0gMCwgYjIgPSAxKQ0KKXsNCiAgc3RhcnRpbmdfdmVjdG9yIDw8LSBzdGFydGluZ192ZWN0b3INCiAgc2hvdWxkc3RvcCA9IEZBTFNFDQogIFJlc3VsdHMgPSBOVUxMDQogIHdoaWxlKHNob3VsZHN0b3AgPT0gRkFMU0Upew0KICAgIFRlbXAgPSBDb25NYXhTdGVwKCkNCiAgICBpZihpcy5udWxsKFJlc3VsdHMpKXsNCiAgICAgIFJlc3VsdHMgPSB0KGFzLmRhdGEuZnJhbWUoVGVtcCkpDQogICAgfQ0KICAgIGVsc2V7DQogICAgICBSZXN1bHRzID0gcmJpbmQoUmVzdWx0cywgVGVtcCkNCiAgICAgIERlbHRhID0gUmVzdWx0c1tucm93KFJlc3VsdHMpLCAibWF4aW11bSJdIC0NCiAgICAgICAgUmVzdWx0c1tucm93KFJlc3VsdHMpIC0gMSwgIm1heGltdW0iXQ0KICAgICAgaWYoRGVsdGEgPCB0b2wpew0KICAgICAgICBzaG91bGRzdG9wID0gVFJVRQ0KICAgICAgfQ0KICAgIH0NCiAgfQ0KICByZXR1cm4oUmVzdWx0cykNCn0NCkNvbk1heFJlc3VsdCA9IENvbk1heCh0b2wgPSAxZS05KQ0KcGFpcnMoQ29uTWF4UmVzdWx0KQ0KYGBgDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkxhYiBOb3RlYm9vayINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQojSW50cm8NClRoaXMgcHJvamVjdCBpcyBhIGNvbGxhYm9yYXRpb24gYmV0d2VlbiBteXNlbGYgYW5kIERyLiBSb2dlciBEYXkgYXMgd2Ugb2JzZXJ2ZSB0aGUgV2Vha2VzdCBMaW5rIE1vZGVsIGFuZCBpdHMgcmVsYXRpb24gdG8gYmlvbWV0cmljcy4gIFNvIGZhciwgd2UgaGF2ZSBwbG90dGVkIHdpdGggYmluYXJ5IGFuZCBjb250aW51b3VzIGRhdGEgYW5kIHBsb3R0ZWQgdXNpbmcgdGhlIGxpa2VsaWhvb2QgZnVuY3Rpb24uICBUaGlzIGZ1bmN0aW9uIHdhcyB1c2VkIHRvIHBsb3QgY29udG91cnMgdGhhdCB3ZXJlIHVzZWQgdG8gZmluZCB0aGUgbW9zdCBsaWtlbHkgdmFsdWVzIGluIGEgZ2l2ZW4gZGF0YSBzZXQuICBGb3Igbm93IHRoZSBkYXRhIGluIHRoZSBwbG90cyBpcyBzeW50aGV0aWMsIGJ1dCB3ZSB3aWxsIHNvb24gdXNlIHJlYWwtd29ybGQgZ2VuZXRpYyBkYXRhIGluIHBsb3RzLiANCg0KDQojIyNXTGJpbmFyeWRhdGENClRoaXMgY29kZSBpcyBhIGZ1bmN0aW9uIHRoYXQgZ2VuZXJhdGVzIHJhbmRvbSBiaW5hcnkgZGF0YSB3aXRoIDIwMCAicGF0aWVudHMiLCBjaGVja3MgdGhlIG1pbmltdW0gdmFsdWUgb2YgZWFjaCBwYXRpZW50KGVpdGhlciAwIG9yIDEpLCBhbmQgcGxvdHMgZWFjaCAicGF0aWVudCIgaW4gcGFpcnMgYmFzZWQgb24gdGhhdCB2YWx1ZS4NCmBgYHtyfQ0KV0xiaW5hcnlkYXRhIDwtDQpmdW5jdGlvbihuID0gMjAwLCBwMCA9IC4xLCBwMSA9IC41KXsNCiAgeDEgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0gMS8yKQ0KICB4MiA9IHJiaW5vbShuID0gbiwgc2l6ZSA9IDEsIHByb2IgPSAxLzIpDQogIHgxeDIgPSBjYmluZCh4MSwgeDIpDQogIGJvdGggPSBhcHBseShYID0geDF4MiwgTUFSR0lOID0gMSwgRlVOID0gbWluKQ0KICB5cHJvYiA9IHAwICogKGJvdGggPT0gMCkgKyBwMSAqIChib3RoID09IDEpDQogIHkgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0geXByb2IpDQogIHJldHVybihkYXRhLmZyYW1lKHgxLCB4MiwgeSwgYm90aCkpDQp9DQpgYGANCg0KIyMjV0xDb250aW51b3VzZGF0YQ0KVGhpcyBjb2RlIGlzIGEgZnVuY3Rpb24gdGhhdCBnZW5lcmF0ZXMgcmFuZG9tIGNvbnRpbnVvdXMgZGF0YSwgcmF0aGVyIHRoYW4gYmluYXJ5IGRhdGEgd2l0aCAyMDAgInBhdGllbnRzIi4gIFVzaW5nIHRoZSBwaGkxIGFuZCBwaGkyIGVxdWF0aW9ucywgYWxvbmcgd2l0aCBpbnZlcnNlIGxvZ2l0LCB0aGUgbWluaW11bSBwaGkgaXMgY2FsY3VsYXRlZCBmb3IgZWFjaCAicGF0aWVudCIgYW5kIHBsb3R0ZWQgaW4gcGFpcnMuDQpgYGB7cn0NCldMQ29udGludW91c2RhdGEgPC0NCmZ1bmN0aW9uKG4gPSAyMDAsIHAwID0gLjEsIHAxID0gLjUsIGExID0gMSwgYTIgPSAyLCBiMSA9IDEsIGIyID0gMil7DQogIHgxID0gcm5vcm0obiA9IG4pDQogIHgyID0gcm5vcm0obiA9IG4pDQogIHgxeDIgPSBjYmluZCh4MSwgeDIpDQogIHBoaTEgPSBhMSArIGIxICogeDENCiAgcGhpMiA9IGEyICsgYjIgKiB4Mg0KICBwaGkxcGhpMiA9IGNiaW5kKHBoaTEsIHBoaTIpDQogIG1pbnBoaSA9IGFwcGx5KFggPSBwaGkxcGhpMiwgTUFSR0lOID0gMSwgRlVOID0gbWluKQ0KICB5cHJvYiA9IGludmVyc2Vsb2dpdChtaW5waGkpDQogIHkgPSByYmlub20obiA9IG4sIHNpemUgPSAxLCBwcm9iID0geXByb2IpDQogIHJldHVybihkYXRhLmZyYW1lKHgxLCB4MiwgeSwgbWlucGhpKSkNCn0NCmBgYA0KDQojIyNMaWtlbHlkYXRhDQpUaGlzIGNvZGUgaXMgYSBmdW5jdGlvbiB0aGF0IHNpbXVsYXRlcyB0aGUgbGlrZWxpaG9vZCBmdW5jdGlvbiB1c2luZyB0aGUgcGhpIGFuZCBpbnZlcnNlIGxvZ2l0IGVxdWF0aW9ucyBmcm9tIGVhcmlsZXIgaW4gdGhlIHByb2dyYW0uVGhlIHBoaXMgYXJlIGdlbmVyYXRlZCBiYXNlZCBvbiBhMSxhMixiMSwgYW5kIGIyIGZyb20gdGhlIGFyZ3VtZW50IGFuZCB0aGUgbWluaW11bSBpcyBwdXQgaW50byB0aGUgbGlrZWxpaG9vZCBlcXVhdGlvbi4NCg0KYGBge3J9DQpMaWtlbHlkYXRhIDwtDQpmdW5jdGlvbihkYXRhID0gdGVtcCwgYTEgPSAxLCBhMiA9IDIsIGIxID0gMSwgYjIgPSAyLCBhMWEyYjFiMil7DQogIGlmKCFtaXNzaW5nKGExYTJiMWIyKSl7DQogICAgYTEgPSBhMWEyYjFiMiRhMQ0KICAgIGEyID0gYTFhMmIxYjIkYTINCiAgICBiMSA9IGExYTJiMWIyJGIxDQogICAgYjIgPSBhMWEyYjFiMiRiMg0KICB9DQogIHBoaWoxID0gaW52ZXJzZWxvZ2l0KGExICsgYjEgKiBkYXRhJHgxKQ0KICBwaGlqMiA9IGludmVyc2Vsb2dpdChhMiArIGIyICogZGF0YSR4MikNCiAgcGhpajFwaGlqMiA9IGNiaW5kKHBoaWoxLCBwaGlqMikNCiAgbWlucGhpaiA9IGFwcGx5KFggPSBwaGlqMXBoaWoyLCBNQVJHSU4gPSAxLCBGVU4gPSBtaW4pDQogIHJldHVybihzdW0oZGF0YSR5KmxvZyhtaW5waGlqKSArICgxIC0gZGF0YSR5KSAqIGxvZygxIC0gbWlucGhpaikpKQ0KfQ0KYGBgDQoNCiMjIyNQbG90dGluZyBmb3IgTGlrZWx5ZGF0YQ0KVGhlIGExIGFuZCBhMiBzZXFzIGFyZSB0aGVuIGdlbmVyYXRlZCwgYW5kIHRoZSBhMSBzZXEgaXMgcGxvdHRlZCBhdCB0aGUgeCBheGlzIGFnYWluc3QgdGhlIExpa2VseSB2YWx1ZXMgZm9yIG9uZSBkaW1lbnNpb24gaW4gYSBjdXJ2ZSBvZiBvcHRpbWFsIHVzZS4NCmBgYHtyfQ0KTGlrZWx5ZGF0YSgpDQphMXNlcSA9IHNlcSgwLDIsbGVuZ3RoID0gMTAwKQ0KYTJzZXEgPSBzZXEoMCw0LGxlbmd0aCA9IDEwMCkNCg0KTHZhbHVlcyA9IHNhcHBseShhMXNlcSwgTGlrZWx5ZGF0YSwgZGF0YSA9IHRlbXApDQpwbG90KGExc2VxLCBMdmFsdWVzLCB0eXBlID0gImwiKQ0KYWJsaW5lKHYgPSBhMXNlcVt3aGljaC5tYXgoTHZhbHVlcyldKQ0KYWJsaW5lKGggPSBtYXgoTHZhbHVlcykpDQpgYGANCg0KIyMjVHdvX0RpbWVuc2lvbmFsDQpUaGlzIGNvZGUgaXMgYSBmdW5jdGlvbiBpbiB3aGljaCBhIG11bHRpLWRpbWVuc2lvbmFsIGNvbnRvdXIgaXMgZ2VuZXJhdGVkIGJhc2VkIG9uIHRoZSBhMXNlcSwgYTJzZXEsIGFuZCBMdmFsdWVzLiAgVGhlIEx2YWx1ZXMgYXJlIHRoZW4gdGFrZW4gd2l0aCB0aGUgY29udGludW91cyBkYXRhIGZ1bmN0aW9uIGFuZCB0aGUgbWF4aW11bSBsaWtlbGlob29kIGlzIGZvdW5kICBhbmQgcGxvdHRlZCBpbiB0aGUgbWlkZGxlIG9mIHRoZSBjb250b3VyIGJhc2VkIG9uIHRoZSBMdmFsdWVzIHJvdyBhbmQgY29sdW1uIG1heGltaXplci4NCmBgYHtyfQ0KVHdvX0RpbWVuc2lvbmFsID0gZnVuY3Rpb24oKXsNCiAgYTFhMmdyaWQgPSBleHBhbmQuZ3JpZChhMXNlcSwgYTJzZXEpDQogIEx2YWx1ZXMgPSBhcHBseShhMWEyZ3JpZCwgMSwgZnVuY3Rpb24ocm93KXtMaWtlbHlkYXRhKGExID0gcm93WzFdLCBhMiA9IHJvd1syXSl9KQ0KICBMdmFsdWVzID0gbWF0cml4KEx2YWx1ZXMsIG5yb3cgPSAxMDApDQogIGNvbnRvdXIuZGVmYXVsdCh4ID0gYTFzZXEsIHkgPWEyc2VxLCB6ID0gTHZhbHVlcykNCiAgYXJncyhXTENvbnRpbnVvdXNkYXRhKQ0KICBwb2ludHMoMSwgMiwgY29sID0gImdyZWVuIiwgcGNoID0gIngiLCBjZXggPSAyKQ0KICBtYXhpbWl6ZXIgPSB3aGljaChtYXgoTHZhbHVlcykgPT0gTHZhbHVlcykNCiAgcm1heCA9IHJvdyhMdmFsdWVzKVttYXhpbWl6ZXJdDQogIGNtYXggPSBjb2woTHZhbHVlcylbbWF4aW1pemVyXQ0KICBwb2ludHMoYTFzZXFbcm1heF0sIGEyc2VxW2NtYXhdLCBjb2wgPSAicmVkIiwgcGNoID0gIm8iLCBjZXggPSA0KQ0KICByZXR1cm4oYyhtYXhpbXVtID0gbWF4KEx2YWx1ZXMpLCBhMW1heGltaXplciA9IGExc2VxW3JtYXhdLCBhMm1heGltaXplciA9IGEyc2VxW2NtYXhdKSkNCn0NCmBgYA0KIyMjTW9yZSBBY2N1cmF0ZSBNYXhpbXVtIExpa2VsaWhvb2RzDQpFYWNoIGRpbWVuc2lvbiBpcyBnaXZlbiBhIGZ1bmN0aW9uIHRoYXQgY2hhbmdlcyBpdHMgdmFsdWUgZnJvbSB0aGUgb3JpZ2luYWwgc3RhcnRpbmcgdmVjdG9yIGFmdGVyIGl0IG1vdmVzLiAgQSBncmVlbiBjaXJjbGUgc3RhcnRzIG9mZiBpbiBhIHJhbmRvbSB2ZWN0b3IgYW5kIG1vdmVzIGFsb25nIGVhY2ggZGltZW5zaW9uIGluIG9yZGVyIHRvIGZpbmQgYSBtb3JlIGFjY3VyYXRlIG1heGltdW0gbGlrZWxpaG9vZCB0aGFuIHRoZSBvbiBwcmV2aW91c2x5IGZvdW5kLiAgVGhlIFJlc3VsdCBpcyB0aGVuIHBsb3R0ZWQgaW4gIHBhaXJzIGFuZCByZXR1cm5lZCB0byB0aGUgdXNlci4NCg0KYGBge3J9DQpBMV9WYXJpZXMgPSBmdW5jdGlvbihhMSl7DQogIExpa2VseWRhdGEoYTEgPSBhMSwgDQogICAgICAgICAgICAgYjEgPSBzdGFydGluZ192ZWN0b3IkYjEsIA0KICAgICAgICAgICAgIGEyID0gc3RhcnRpbmdfdmVjdG9yJGEyLCANCiAgICAgICAgICAgICBiMiA9IHN0YXJ0aW5nX3ZlY3RvciRiMikNCn0NCkEyX1ZhcmllcyA9IGZ1bmN0aW9uKGEyKXsNCiAgTGlrZWx5ZGF0YShhMSA9IHN0YXJ0aW5nX3ZlY3RvciRhMSwgDQogICAgICAgICAgICAgYjEgPSBzdGFydGluZ192ZWN0b3IkYjEsIA0KICAgICAgICAgICAgIGEyID0gYTIsIA0KICAgICAgICAgICAgIGIyID0gc3RhcnRpbmdfdmVjdG9yJGIyKQ0KfQ0KQjFfVmFyaWVzID0gZnVuY3Rpb24oYjEpew0KICBMaWtlbHlkYXRhKGIxID0gYjEsIA0KICAgICAgICAgICAgIGExID0gc3RhcnRpbmdfdmVjdG9yJGExLCANCiAgICAgICAgICAgICBhMiA9IHN0YXJ0aW5nX3ZlY3RvciRhMiwgDQogICAgICAgICAgICAgYjIgPSBzdGFydGluZ192ZWN0b3IkYjIpDQp9DQpCMl9WYXJpZXMgPSBmdW5jdGlvbihiMil7DQogIExpa2VseWRhdGEoYTEgPSBzdGFydGluZ192ZWN0b3IkYTEsIA0KICAgICAgICAgICAgIGIxID0gc3RhcnRpbmdfdmVjdG9yJGIxLCANCiAgICAgICAgICAgICBiMiA9IGIyLCANCiAgICAgICAgICAgICBhMiA9IHN0YXJ0aW5nX3ZlY3RvciRhMikNCn0NCkNvbk1heFN0ZXAgPSBmdW5jdGlvbigpew0KICBuZXdhMSA9IG9wdGltaXplKGYgPSBBMV9WYXJpZXMsIGludGVydmFsID0gYygwLDIpLCBtYXhpbXVtID0gVFJVRSkkbWF4aW11bQ0KICBzdGFydGluZ192ZWN0b3IkYTEgPDwtIG5ld2ExDQogIG5ld2EyID0gb3B0aW1pemUoZiA9IEEyX1ZhcmllcywgaW50ZXJ2YWwgPSBjKDAsMiksIG1heGltdW0gPSBUUlVFKSRtYXhpbXVtDQogIHN0YXJ0aW5nX3ZlY3RvciRhMiA8PC0gbmV3YTINCiAgbmV3YjEgPSBvcHRpbWl6ZShmID0gQjFfVmFyaWVzLCBpbnRlcnZhbCA9IGMoMCwyKSwgbWF4aW11bSA9IFRSVUUpJG1heGltdW0NCiAgc3RhcnRpbmdfdmVjdG9yJGIxIDw8LSBuZXdiMQ0KICBuZXdiMiA9IG9wdGltaXplKGYgPSBCMl9WYXJpZXMsIGludGVydmFsID0gYygwLDIpLCBtYXhpbXVtID0gVFJVRSkkbWF4aW11bQ0KICBzdGFydGluZ192ZWN0b3IkYjIgPDwtIG5ld2IyDQogIHJldHVybihjKG1heGltdW0gPSBMaWtlbHlkYXRhKGExYTJiMWIyID0gc3RhcnRpbmdfdmVjdG9yKSwgDQogICAgICAgICAgIGExbWF4aW1pemVyID0gbmV3YTEsIA0KICAgICAgICAgICBhMm1heGltaXplciA9IG5ld2EyLA0KICAgICAgICAgICBiMW1heGltaXplciA9IG5ld2IxLCANCiAgICAgICAgICAgYjJtYXhpbWl6ZXIgPSBuZXdiMikpDQp9DQpDb25NYXggPSBmdW5jdGlvbih0b2wgPSAxZS03LCANCiAgICAgICAgICAgICAgICAgIHN0YXJ0aW5nX3ZlY3RvciA9IGxpc3QoYTEgPSAxLCBhMiA9IDMsIGIxID0gMCwgYjIgPSAxKQ0KKXsNCiAgc3RhcnRpbmdfdmVjdG9yIDw8LSBzdGFydGluZ192ZWN0b3INCiAgc2hvdWxkc3RvcCA9IEZBTFNFDQogIFJlc3VsdHMgPSBOVUxMDQogIHdoaWxlKHNob3VsZHN0b3AgPT0gRkFMU0Upew0KICAgIFRlbXAgPSBDb25NYXhTdGVwKCkNCiAgICBpZihpcy5udWxsKFJlc3VsdHMpKXsNCiAgICAgIFJlc3VsdHMgPSB0KGFzLmRhdGEuZnJhbWUoVGVtcCkpDQogICAgfQ0KICAgIGVsc2V7DQogICAgICBSZXN1bHRzID0gcmJpbmQoUmVzdWx0cywgVGVtcCkNCiAgICAgIERlbHRhID0gUmVzdWx0c1tucm93KFJlc3VsdHMpLCAibWF4aW11bSJdIC0NCiAgICAgICAgUmVzdWx0c1tucm93KFJlc3VsdHMpIC0gMSwgIm1heGltdW0iXQ0KICAgICAgaWYoRGVsdGEgPCB0b2wpew0KICAgICAgICBzaG91bGRzdG9wID0gVFJVRQ0KICAgICAgfQ0KICAgIH0NCiAgfQ0KICByZXR1cm4oUmVzdWx0cykNCn0NCkNvbk1heFJlc3VsdCA9IENvbk1heCh0b2wgPSAxZS05KQ0KcGFpcnMoQ29uTWF4UmVzdWx0KQ0KYGBgDQoNCiMjIyMgUGxvdHRpbmcgdGhlIExpbmUgb2YgRWZmaWNpZW50IFVzZQ0KVGhpcyBmaXJzdCBwaWVjZSBvZiBjb2RlIGlzIHVzZWQgdG8gZ2VuZXJhdGUgcmFuZG9tIHBvaW50cyBvbiBhIHBsb3QgdXNpbmcgdGhlIHgxIGFuZCB4MiB2YXJpYWJsZXMuICBUaGUgc2xvcGUgb2YgdGhlIHBsb3Qgd2lsbCB0aGVuIGJlIHBsb3R0ZWQgYmFzZWQgb24gdGhlIGxvY2F0aW9uIG9mIHRoZSBwbG90IGFuZCBpdHMgcG9pbnRzLCBhbmQgdGhlIGxpbmVzIG9mIGVmZmljZWludCB1c2UgKFRoZSAiTCIgc2hhcGVzKSB3aWxsIGJlIHBsb3R0ZWQgYmFzZWQgb24gdGhlIHNsb3BlLg0KYGBge3J9DQpQbG90cG9pbnRzID0gZnVuY3Rpb24ocjEsIHIyLCBkMSwgZDIpew0KICB4MiA9IHJub3JtKDIwLCAyLCAxKQ0KICBwbG90KHgyKQ0KICBwb2ludHMgPSBsaXN0KHgyKQ0KfQ0KYGBgDQo=</div>
 
 
 

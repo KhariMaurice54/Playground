@@ -158,3 +158,15 @@ ConMaxResult = ConMax(tol = 1e-9)
 pairs(ConMaxResult)
 ```
 
+#### Plotting the Line of Efficient Use
+This first piece of code is used to generate random points on a plot using the x1 and x2 variables.  The slope of the plot will then be plotted based on the location of the plot and its points, and the lines of efficeint use (The "L" shapes) will be plotted based on the slope.
+```{r}
+Plotpoints = function(r1, r2, d1, d2){
+  x2 = rnorm(20, 2, 1)
+  plot(x2)
+  points = list(x2)
+}
+```
+##Slope
+The next piece of code is used to plot the slope based on the points generated and is based within the function of abline.  
+
