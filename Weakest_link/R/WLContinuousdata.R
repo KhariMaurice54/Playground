@@ -9,5 +9,9 @@ function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
   minphi = apply(X = phi1phi2, MARGIN = 1, FUN = min)
   yprob = inverselogit(minphi)
   y = rbinom(n = n, size = 1, prob = yprob)
-  return(data.frame(x1, x2, y, minphi))
+  data = data.frame(x1, x2, y, minphi)
+  attr(data, "parameters") = c(p0 = p0, p1 = p1, a1 = a1, a2 = a2, b1 = b1, b2 = b2)
+  return(data)
 }
+WLContinuousdata()
+#attributes(.Last.value)
