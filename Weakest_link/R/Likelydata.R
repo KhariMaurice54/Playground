@@ -13,3 +13,8 @@ function(data = temp, a1 = 1, a2 = 2, b1 = 1, b2 = 2, a1a2b1b2){
   return(sum(data$y*log(minphij) + (1 - data$y) * log(1 - minphij)))
   
 }
+
+NegaLike = function(par){
+  Likelydata(a1a2b1b2 = as.list(par))
+  
+}
