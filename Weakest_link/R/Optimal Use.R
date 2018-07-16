@@ -1,5 +1,5 @@
 #The purpose of this function is to plot points on a plane of x1 by x2.
-dataset = WLContinuousdata(n = 200, p1 = .9, b1 = 10, b2 = 10)
+dataset = WLContinuousdata(n = 100, p1 = .9, b1 = 5, b2 = 5)
 Plotpoints = function(data = dataset){
   plot(data$x1, data$x2, pch = as.character(data$y), col = c("red", "blue")[1 + data$y])
 }
@@ -48,4 +48,8 @@ ConMaxStep = function(){
 }
 
 estimateline = ConMaxStep()
-abline(a = (estimateline$a1maximizer - estimateline$a2maximizer)/estimateline$b2maximizer, b = estimateline$b1maximizer/estimateline$b2maximizer, col = "purple", lty = 2, lwd = 2) 
+abline(a = (estimateline$a1maximizer - estimateline$a2maximizer)/estimateline$b2maximizer,
+       b = estimateline$b1maximizer/estimateline$b2maximizer, 
+       col = "purple", 
+       lty = 2, 
+       lwd = 2) 
