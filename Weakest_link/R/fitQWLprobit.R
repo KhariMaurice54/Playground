@@ -8,9 +8,10 @@ lines(x=qnorm(
   Ptemp<-seq(0,1,length=length(p45x1))
 ), y=Ptemp, col='green', lwd=3)
 
-fitDelta = function(delta, data = data) {
-  fitQWLprobit(data = data, testMe = FALSE,
-               plotData = FALSE, delta = delta 
+fitDelta = function(delta, ...) {
+  fitQWLprobit(testMe = FALSE,
+               plotData = FALSE, delta = delta,
+               ...
   )$theAIC
 }
 
@@ -92,7 +93,7 @@ fitQWLprobit(testMe=TRUE, plotData = TRUE, delta=1e-15,
              b1 = 3, b2 = 5)
 testData = WLContinuousdata( b1 = 3, b2 = 5)
 
-deltaSeq = seq(-3,3,length=100)
+deltaSeq = seq(0,3,length=100)
 resultSeq = sapply(deltaSeq, fitDelta, data=testData)
 plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
 
@@ -105,3 +106,26 @@ fitQWLprobit(data = mb, delta=0,
              x1=names(sort(p45plog))[1],
              x2=names(sort(p45plog))[2],
              endpoint='ySurv')
+deltaSeq = seq(0,3,length=500)
+resultSeq = sapply(deltaSeq, fitDelta, 
+                   data=mb, 
+                   x1=names(sort(p45plog))[1],
+                   x2=names(sort(p45plog))[2],
+                   endpoint='ySurv' )
+plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
+
+optResult = optimize(fitDelta, data=mb, 
+                     x1=names(sort(p45plog))[1],
+                     x2=names(sort(p45plog))[2],
+                     endpoint='ySurv',
+                     interval = c(0,3), tol = 1e-7)
+abline(v=optResult$minimum, h=optResult$objective, col='red')
+
+install.packages('GenSA')
+help(p='GenSA')
+require(GenSA)
+GenSA(par=0, lower=-1, upper= 2,
+      fitDelta, data=mb, 
+      x1=names(sort(p45plog))[1],
+      x2=names(sort(p45plog))[2],
+      endpoint='ySurv')
