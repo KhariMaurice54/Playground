@@ -1,0 +1,74 @@
+---
+title: "Lab Notebook"
+output: html_notebook
+---
+#Intro
+This project is a collaboration between myself and Dr. Roger Day as we observe the Weakest Link Model and its relation to biometrics.  So far, we have plotted with binary and continuous data and plotted using the likelihood function.  This function was used to plot contours that were used to find the most likely values in a given data set.  For now the data in the plots is synthetic, but we will soon use real-world genetic data in plots. 
+
+
+###WLbinarydata
+This code is a function that generates random binary data with 200 "patients", checks the minimum value of each patient(either 0 or 1), and plots each "patient" in pairs based on that value.
+```{r}
+WLbinarydata <-
+function(n = 200, p0 = .1, p1 = .5){
+  x1 = rbinom(n = n, size = 1, prob = 1/2)
+  x2 = rbinom(n = n, size = 1, prob = 1/2)
+  x1x2 = cbind(x1, x2)
+  both = apply(X = x1x2, MARGIN = 1, FUN = min)
+  yprob = p0 * (both == 0) + p1 * (both == 1)
+  y = rbinom(n = n, size = 1, prob = yprob)
+  return(data.frame(x1, x2, y, both))
+}
+```
+
+###WLContinuousdata
+This code is a function that generates random continuous data, rather than binary data with 200 "patients".  Using the phi1 and phi2 equations, along with inverse logit, the minimum phi is calculated for each "patient" and plotted in pairs.
+```{r}
+WLContinuousdata <-
+function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
+  x1 = rnorm(n = n)
+  x2 = rnorm(n = n)
+  x1x2 = cbind(x1, x2)
+  phi1 = a1 + b1 * x1
+  phi2 = a2 + b2 * x2
+  phi1phi2 = cbind(phi1, phi2)
+  minphi = apply(X = phi1phi2, MARGIN = 1, FUN = min)
+  yprob = inverselogit(minphi)
+  y = rbinom(n = n, size = 1, prob = yprob)
+  return(data.frame(x1, x2, y, minphi))
+}
+```
+
+###Likelydata
+This code is a function that simulates the likelihood function using the phi and inverse logit equations from eariler in the program.The phis are generated based on a1,a2,b1, and b2 from the argument and the minimum is put into the likelihood equation.
+
+```{r}
+Likelydata <-
+function(data = temp, a1 = 1, a2 = 2, b1 = 1, b2 = 2, a1a2b1b2){
+  if(!missing(a1a2b1b2)){
+    a1 = a1a2b1b2$a1
+    a2 = a1a2b1b2$a2
+    b1 = a1a2b1b2$b1
+    b2 = a1a2b1b2$b2
+  }
+  phij1 = inverselogit(a1 + b1 * data$x1)
+  phij2 = inverselogit(a2 + b2 * data$x2)
+  phij1phij2 = cbind(phij1, phij2)
+  minphij = apply(X = phij1phij2, MARGIN = 1, FUN = min)
+  return(sum(data$y*log(minphij) + (1 - data$y) * log(1 - minphij)))
+}
+```
+
+####Plotting for Likelydata
+The a1 and a2 seqs are then generated, and the a1 seq is plotted at the x axis against the Likely values for one dimension in a curve of optimal use.
+```{r}
+Likelydata()
+a1seq = seq(0,2,length = 100)
+a2seq = seq(0,4,length = 100)
+
+Lvalues = sapply(a1seq, Likelydata, data = temp)
+plot(a1seq, Lvalues, type = "l")
+abline(v = a1seq[which.max(Lvalues)])
+abline(h = max(Lvalues))
+```
+
