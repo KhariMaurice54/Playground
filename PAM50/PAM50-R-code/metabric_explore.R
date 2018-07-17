@@ -22,6 +22,7 @@ text(sort(p45plog) [1], ( (1:45)/45) [1],
 
 plot(survfit(Surv(time, cens) ~ (UBE2C > median(UBE2C)), 
              data=mb) )
+attr(mb, 'ySurv') = with(data=mb, Surv(time, cens))
 with(data=mb,
      table(classif, (UBE2C > median(UBE2C)) 
      ) 
