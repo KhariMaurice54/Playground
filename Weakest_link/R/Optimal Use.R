@@ -31,6 +31,9 @@ B2_Varies = function(b2){
              b2 = b2, 
              a2 = starting_vector$a2)
 }
+starting_vector = list(
+  a1=0, a2=0, b1=1, b2=1
+)
 ConMaxStep = function(){
   newa1 = optimize(f = A1_Varies, interval = c(0,2), maximum = TRUE)$maximum
   starting_vector$a1 <<- newa1
