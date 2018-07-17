@@ -27,8 +27,8 @@ fitQWLprobit = function(data,
   x2 = data[[x2]]
   if(endpoint != 'ySurv')
     y = data[[endpoint]]
-  if(endpoint == 'ySurv') {
-    assign('ySurv', attr(data, 'ySurv'), immediate=TRUE)
+  if(endpoint == 'ySurv') 
+    assign('ySurv', attr(data, 'ySurv'), pos=1, immediate=TRUE)
   Fhat1 = pnorm(x1, mean(x1), sd(x1)) * ifelse(dir1, 1, -1)
   Fhat2 = pnorm(x2, mean(x2), sd(x2)) * ifelse(dir2, 1, -1)
   H = inverselogit
@@ -70,10 +70,11 @@ fitQWLprobit = function(data,
   
   if(plotData) {
     plot(Fhat2, phi2)
-    colorChoice = ifelse(endpoint=='ySurv',
-                         2+ySurv[ , 'status'],
-                         1 + (y > median(y)) )
-    print(table(ySurv[ , 'status'],  exclude=NULL))
+    print(endpoint)
+    colorChoice = if(endpoint=='ySurv') 
+                         1+ySurv[ , 'status'] else
+                         1 + (y > median(y)) 
+    print(table(colorChoice))
     plot(x1, x2, pch=c('0','1')[colorChoice], 
          col=c('red','green')[colorChoice])
     # COU is where phi1 = phi2, Fhat1 = phi2,
