@@ -5,8 +5,9 @@ dim(mb_gexprs)
 mb_gexprs[1:6,1:6]
 mb_gexprs_names = names(mb_gexprs)
 length(intersect(names(mb_gexprs), PAM50genes))  ## 45
-setdiff(y=names(mb_gexprs), PAM50genes)  ## 45
+setdiff(y=names(mb_gexprs), PAM50genes)  ## 5 missing
  ####    "CDCA1" "CXXC5" "KNTC2" "MIA"   "ORC6L"
+p45 = intersect(names(mb_gexprs), PAM50genes)  ## 45
 mb_gexprs_pts = mb_gexprs$X   # 1981
 mb_gexprs_pam50 = mb_gexprs[
   c('X', 
