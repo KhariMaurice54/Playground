@@ -1,4 +1,5 @@
-# metabric_explore
+# metabric_explore\
+require(survival)
 kmfit = survfit(Surv(time, cens) ~ classif, data=mb)
 colors = seq(along=levels(mb$classif))
 plot(kmfit, xlab='years', ylab='Survival',
