@@ -5,7 +5,7 @@ Plotpoints = function(data = dataset){
 }
 Plotpoints()
 attach(as.list(attributes(dataset)[["parameters"]]))
-abline(a = ((a1 + a2)/ b2), b = (b1/b2))
+drawline(a1, a2, b1, b2)
 detach()
 A1_Varies = function(a1){
   Likelydata(a1 = a1, 
@@ -48,8 +48,9 @@ ConMaxStep = function(){
 }
 
 estimateline = ConMaxStep()
-abline(a = (estimateline$a1maximizer - estimateline$a2maximizer)/estimateline$b2maximizer,
-       b = estimateline$b1maximizer/estimateline$b2maximizer, 
+with(estimateline, 
+     drawline(a1maximizer,a2maximizer,b1maximizer,b2maximizer,
        col = "purple", 
        lty = 2, 
        lwd = 2) 
+)
