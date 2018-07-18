@@ -97,7 +97,7 @@ fitQWLprobit(testMe=TRUE, plotData = TRUE, delta=1e-15,
              b1 = 3, b2 = 5)
 testData = WLContinuousdata( b1 = 3, b2 = 5)
 
-deltaSeq = seq(0,3,length=100)
+deltaSeq = seq(-3,3,length=100)
 resultSeq = sapply(deltaSeq, fitDelta, data=testData)
 plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
 
@@ -110,7 +110,7 @@ fitQWLprobit(data = mb, delta=0,
              x1=names(sort(p45plog))[1],
              x2=names(sort(p45plog))[2],
              endpoint='ySurv')
-deltaSeq = seq(0,3,length=500)
+deltaSeq = seq(-3,3,length=500)
 resultSeq = sapply(deltaSeq, fitDelta, 
                    data=mb, 
                    x1=names(sort(p45plog))[1],
@@ -122,7 +122,7 @@ optResult = optimize(fitDelta, data=mb,
                      x1=names(sort(p45plog))[1],
                      x2=names(sort(p45plog))[2],
                      endpoint='ySurv',
-                     interval = c(0,3), tol = 1e-7)
+                     interval = c(-3,3), tol = 1e-7)
 abline(v=optResult$minimum, h=optResult$objective, col='red')
 
 install.packages('GenSA')
