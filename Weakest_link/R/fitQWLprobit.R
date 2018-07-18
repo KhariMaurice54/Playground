@@ -8,11 +8,14 @@ lines(x=qnorm(
   Ptemp<-seq(0,1,length=length(p45x1))
 ), y=Ptemp, col='green', lwd=3)
 
-fitDelta = function(delta, ...) {
-  fitQWLprobit(testMe = FALSE,
+fitDelta = function(delta, plotPoints = FALSE,...) {
+  result = fitQWLprobit(testMe = FALSE,
                plotData = FALSE, delta = delta,
                ...
   )$theAIC
+  if(plotPoints)
+    points(delta, result, col='blue', pch='X')
+  return(result)
 }
 
 fitQWLprobit = function(data,
@@ -124,8 +127,17 @@ abline(v=optResult$minimum, h=optResult$objective, col='red')
 install.packages('GenSA')
 help(p='GenSA')
 require(GenSA)
-GenSA(par=0, lower=-1, upper= 2,
-      fitDelta, data=mb, 
+system.time(saResult<<-GenSA(par=0, lower=-1, upper= 2,
+      control=list(maxit=1000),
+      fitDelta, plotPoints = TRUE, data=mb, 
       x1=names(sort(p45plog))[1],
       x2=names(sort(p45plog))[2],
-      endpoint='ySurv')
+      endpoint='ySurv'))
+str(saResult)
+plot(saResult$trace.mat[,1], saResult$trace.mat[,2], log='y')
+plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
+     ylim=c(saResult$value, -92.5))
+plot(saResult$trace.mat[,1], saResult$trace.mat[,4],
+     ylim=c(saResult$value, -92.7))
+plot(saResult$trace.mat[,3], saResult$trace.mat[,4])
+
