@@ -13,5 +13,5 @@ function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
   attr(data, "parameters") = c(p0 = p0, p1 = p1, a1 = a1, a2 = a2, b1 = b1, b2 = b2)
   return(data)
 }
-WLContinuousdata()
+#WLContinuousdata()
 #attributes(.Last.value)

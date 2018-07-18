@@ -1,18 +1,18 @@
-require(WeakestLink)
-temp= WLbinarydata()
-pairs(temp)
-
-temp=WLContinuousdata(n = 150)
-pairs(temp)
-
-Likelydata()
-a1seq = seq(0,2,length = 100)
-a2seq = seq(0,4,length = 100)
-#One dimensional plot
-Lvalues = sapply(a1seq, Likelydata, data = temp)
-plot(a1seq, Lvalues, type = "l")
-abline(v = a1seq[which.max(Lvalues)])
-abline(h = max(Lvalues))
+# require(WeakestLink)
+# temp= WLbinarydata()
+# pairs(temp)
+# 
+# temp=WLContinuousdata(n = 150)
+# pairs(temp)
+# 
+# Likelydata()
+# a1seq = seq(0,2,length = 100)
+# a2seq = seq(0,4,length = 100)
+# #One dimensional plot
+# Lvalues = sapply(a1seq, Likelydata, data = temp)
+# plot(a1seq, Lvalues, type = "l")
+# abline(v = a1seq[which.max(Lvalues)])
+# abline(h = max(Lvalues))
 
 ####Two Dimensional Plot####
 Two_Dimensional = function(){
@@ -31,9 +31,6 @@ Two_Dimensional = function(){
 Two_Dimensional()
 
 ####Finding a more accurate maximizer liklihood estimate by "hem-stiching"(conditional maximization)####
-Four_Dimensional = function(starting_vector = list(a1 = 1, a2 = 1, b1 = 1, b2 = 1)){
-  optimize()
-}
 
 ####A1 Variation Function####
 A1_Varies = function(a1){
@@ -97,5 +94,5 @@ ConMax = function(tol = 1e-7,
   }
   return(Results)
 }
-ConMaxResult = ConMax(tol = 1e-9)
-pairs(ConMaxResult)
+# ConMaxResult = ConMax(tol = 1e-9)
+# pairs(ConMaxResult)
