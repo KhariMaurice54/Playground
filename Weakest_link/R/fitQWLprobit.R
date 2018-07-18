@@ -75,9 +75,10 @@ fitQWLprobit = function(data,
   if(plotData) {
     plot(Fhat2, phi2)
     print(endpoint)
-    colorChoice = if(endpoint=='ySurv') 
-                         1+ySurv[ , 'status'] else
-                         1 + (y > median(y)) 
+    if(endpoint=='ySurv')
+      colorChoice =  1+ySurv[ , 'status']
+    else
+      colorChoice = 1 + (y > median(y)) 
     print(table(colorChoice))
     plot(x1, x2, pch=c('0','1')[colorChoice], 
          col=c('red','green')[colorChoice])
@@ -88,7 +89,7 @@ fitQWLprobit = function(data,
     matching_x2 = qnorm(matching_P2, mean=mean(x2), sd=sd(x2))
     lines(x1[order(x1)], matching_x2[order(x1)] )
   }
-  
+  attr(result, 'frame') = sys.frame(1)
   return(result )
 }
 
