@@ -8,6 +8,33 @@ lines(x=qnorm(
   Ptemp<-seq(0,1,length=length(p45x1))
 ), y=Ptemp, col='green', lwd=3)
 
+onedimPredictor = function(delta, p1 = Fhat1, p2 = Fhat2){
+  if(delta == 0) {
+    phi2 <<- p2
+  } else if(length(delta)==1) {
+    phi2 <<- 1 - H(Hinv(1-p2) -  delta)
+  }
+  pmin(p1, phi2)
+}
+fitOneDelta = function(delta) {
+  predictor = onedimPredictor(delta)
+  if(endpoint == 'ySurv') {
+    require(survival)
+    result = coxph(ySurv ~ predictor)
+    #print(result)
+    theAIC = 2 - 2*diff(result$loglik)
+  }
+  else {
+    if(all(data[[endpoint]] %in% c(0,1,NA) ) ) 
+      fam = binomial
+    else 
+      fam = normal
+    result  = glm(y ~ predictor, family=binomial, data=data)
+    theAIC = result$aic
+  }
+  return(list(result=result, theAIC=theAIC))
+}
+
 fitDelta = function(delta, plotPoints = FALSE,...) {
   result = fitQWLprobit(testMe = FALSE,
                plotData = FALSE, delta = delta,
@@ -37,29 +64,6 @@ fitQWLprobit = function(data,
   Fhat2 = pnorm(x2, mean(x2), sd(x2)) * ifelse(dir2, 1, -1)
   H = inverselogit
   Hinv= logit
-  fitOneDelta = function(delta) {
-    if(delta == 0) {
-      phi2 <<- Fhat2
-    } else if(length(delta)==1) {
-      phi2 <<- 1 - H(Hinv(1-Fhat2) -  delta)
-    }
-    phiMin = pmin(Fhat1, phi2)
-    if(endpoint == 'ySurv') {
-      require(survival)
-      result = coxph(ySurv ~ phiMin)
-      #print(result)
-      theAIC = 2 - 2*diff(result$loglik)
-    }
-    else {
-      if(all(data[[endpoint]] %in% c(0,1,NA) ) ) 
-        fam = binomial
-      else 
-        fam = normal
-      result  = glm(y ~ phiMin, family=binomial, data=data)
-      theAIC = result$aic
-    }
-    return(list(result=result, theAIC=theAIC))
-  }
   if(length(delta) == 1)
     result = fitOneDelta(delta)
   else {
@@ -93,10 +97,10 @@ fitQWLprobit = function(data,
   return(result )
 }
 
-fitQWLprobit(testMe=TRUE, plotData = TRUE, delta=1e-15, 
+fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
              b1 = 3, b2 = 5)
-testData = WLContinuousdata( b1 = 3, b2 = 5)
 
+testData = WLContinuousdata( b1 = 3, b2 = 5)
 deltaSeq = seq(0,3,length=100)
 resultSeq = sapply(deltaSeq, fitDelta, data=testData)
 plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
@@ -141,4 +145,18 @@ plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
 plot(saResult$trace.mat[,1], saResult$trace.mat[,4],
      ylim=c(saResult$value, -92.7))
 plot(saResult$trace.mat[,3], saResult$trace.mat[,4])
+
+#### evaluation ####
+#### prediction from a fitQWLprobit model
+# We calculate the onedimPredictor
+testResult = fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
+             b1 = 3, b2 = 5)
+theFrame = attr(testResult, 'frame')
+ls(env=theFrame)
+#attach(theFrame)
+with(theFrame, {
+     H=get('H', env=theFrame)
+     onedimPredictor(delta = delta)
+     }
+)
 
