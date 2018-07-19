@@ -4,6 +4,7 @@ Title: Fit and test weakest link models
 Version: 0.2
 Date: 2018-07-18
 Author: Khari Smith and Roger Day
-Maintainer:  <kharimauriceschool@gmail.com>
+Maintainer: <kharimauriceschool@gmail.com>
 Description: Fit and test weakest link models
 License: GPL
+RoxygenNote: 6.0.1
