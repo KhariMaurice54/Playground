@@ -1,3 +1,10 @@
+#' Simulate data from a model E(Y) = min(phi1, phi2) where the phi are inverselogits of linear functions.
+#' 
+#' \code{WLcontinuousdata} Generate a simulated dataset 
+#' with Bernoulli outcomes Y and two predictors.
+#' E(Y) = min(phi1, phi2) where the phi are logits of linear functions of the predictors.
+#' 
+
 WLContinuousdata <-
 function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
   x1 = rnorm(n = n)
