@@ -1,5 +1,7 @@
 # metabric_read.R
 
+source('/Users/Roger/Box_Sync/DBMI/COSBBI-2018/Khari/K_play/PAM50/PAM50-R-code/pam50-centroids-read.R.R')
+PAM50genes = rownames(PAM50centroids)
 mb_gexprs = read.csv('/Users/Roger/Box_Sync/DBMI/COSBBI-2018/Khari/METABRIC/Metabric.gexprs.csv')
 dim(mb_gexprs)
 mb_gexprs[1:6,1:6]
@@ -8,13 +10,15 @@ length(intersect(names(mb_gexprs), PAM50genes))  ## 45
 setdiff(y=names(mb_gexprs), PAM50genes)  ## 5 missing
  ####    "CDCA1" "CXXC5" "KNTC2" "MIA"   "ORC6L"
 p45 = intersect(names(mb_gexprs), PAM50genes)  ## 45
+save(p45, file='Weakest_link/data/p45.rdata')
+
 mb_gexprs_pts = mb_gexprs$X   # 1981
 mb_gexprs_pam50 = mb_gexprs[
   c('X', 
     intersect(names(mb_gexprs), PAM50genes))] 
 
 ####  clinical data ####
-dirMB = '/Weakest_link/data/metabric 2/'
+dirMB = '/Weakest_link/misc/metabric 2/'
 mb_clin = Metabric.clinical.features =
   read.csv(paste0(getwd(), dirMB,
        'Metabric.clinical.features.csv')
