@@ -7,9 +7,12 @@
 #'  @param z A value in (-Inf, Inf)
 #'  @param p A value in [0,1]
 
-H <- inverselogit <-
+H <- pnorm ### could also be inverselogit
+inverselogit <-
   function(z){
     exp(z)/ (1 + exp(z))
   }
 
-Hinv <- logit = function(p) log(p/(1-p))
+Hinv <- qnorm   ### could also be logit
+logit <-
+  function(p) {log(p/(1-p))}
