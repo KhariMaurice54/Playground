@@ -1,13 +1,16 @@
 #### fitQWLprobit:  fit a parametric weakest link model ####
 
 normcdf = function(x) pnorm(x, mean(x), sd(x))
-## comparing normcdf to ecdf:
-p45x1 = mb[[ p45[1] ]]
-plot( ecdf(x = p45x1) )
-lines(x=qnorm(
-  Ptemp<-seq(0,1,length=length(p45x1))
-), y=Ptemp, col='green', lwd=3)
 
+compare_cdfs = function() {
+  ## comparing normcdf to ecdf:
+  data(mb)
+  p45x1 = mb[[ p45[1] ]]
+  plot( ecdf(x = p45x1) )
+  lines(x=qnorm(
+    Ptemp<-seq(0,1,length=length(p45x1))
+  ), y=Ptemp, col='green', lwd=3)
+}
 onedimPredictor = function(delta, p1 = Fhat1, p2 = Fhat2){
   if(delta == 0) {
     phi2 <<- p2
@@ -97,66 +100,66 @@ fitQWLprobit = function(data,
   return(result )
 }
 
-fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
-             b1 = 3, b2 = 5)
-
-testData = WLContinuousdata( b1 = 3, b2 = 5)
-deltaSeq = seq(0,3,length=100)
-resultSeq = sapply(deltaSeq, fitDelta, data=testData)
-plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
-
-optResult = optimize(fitDelta, data=testData,
-                     interval = c(-3,3), tol = 1e-3)
-abline(v=optResult$minimum, h=optResult$objective, col='red')
-
-##### Now on real survival data ####
-fitQWLprobit(data = mb, delta=0,
-             x1=names(sort(p45plog))[1],
-             x2=names(sort(p45plog))[2],
-             endpoint='ySurv')
-deltaSeq = seq(0,3,length=500)
-resultSeq = sapply(deltaSeq, fitDelta, 
-                   data=mb, 
-                   x1=names(sort(p45plog))[1],
-                   x2=names(sort(p45plog))[2],
-                   endpoint='ySurv' )
-plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
-
-optResult = optimize(fitDelta, data=mb, 
+fitQWLprobitTests = function() {
+  fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
+               b1 = 3, b2 = 5)
+  testData = WLContinuousdata( b1 = 3, b2 = 5)
+  deltaSeq = seq(0,3,length=100)
+  resultSeq = sapply(deltaSeq, fitDelta, data=testData)
+  plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
+  
+  optResult = optimize(fitDelta, data=testData,
+                       interval = c(-3,3), tol = 1e-3)
+  abline(v=optResult$minimum, h=optResult$objective, col='red')
+  
+  ##### Now on real survival data ####
+  fitQWLprobit(data = mb, delta=0,
+               x1=names(sort(p45plog))[1],
+               x2=names(sort(p45plog))[2],
+               endpoint='ySurv')
+  deltaSeq = seq(0,3,length=500)
+  resultSeq = sapply(deltaSeq, fitDelta, 
+                     data=mb, 
                      x1=names(sort(p45plog))[1],
                      x2=names(sort(p45plog))[2],
-                     endpoint='ySurv',
-                     interval = c(0,3), tol = 1e-7)
-abline(v=optResult$minimum, h=optResult$objective, col='red')
-
-install.packages('GenSA')
-help(p='GenSA')
-require(GenSA)
-system.time(saResult<<-GenSA(par=0, lower=-1, upper= 2,
-      control=list(maxit=1000),
-      fitDelta, plotPoints = TRUE, data=mb, 
-      x1=names(sort(p45plog))[1],
-      x2=names(sort(p45plog))[2],
-      endpoint='ySurv'))
-str(saResult)
-plot(saResult$trace.mat[,1], saResult$trace.mat[,2], log='y')
-plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
-     ylim=c(saResult$value, -92.5))
-plot(saResult$trace.mat[,1], saResult$trace.mat[,4],
-     ylim=c(saResult$value, -92.7))
-plot(saResult$trace.mat[,3], saResult$trace.mat[,4])
-
-#### evaluation ####
-#### prediction from a fitQWLprobit model
-# We calculate the onedimPredictor
-testResult = fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
-             b1 = 3, b2 = 5)
-theFrame = attr(testResult, 'frame')
-ls(env=theFrame)
-#attach(theFrame)
-with(theFrame, {
-     H=get('H', env=theFrame)
-     onedimPredictor(delta = delta)
-     }
-)
-
+                     endpoint='ySurv' )
+  plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
+  
+  optResult = optimize(fitDelta, data=mb, 
+                       x1=names(sort(p45plog))[1],
+                       x2=names(sort(p45plog))[2],
+                       endpoint='ySurv',
+                       interval = c(0,3), tol = 1e-7)
+  abline(v=optResult$minimum, h=optResult$objective, col='red')
+  
+  install.packages('GenSA')
+  help(p='GenSA')
+  require(GenSA)
+  system.time(saResult<<-GenSA(par=0, lower=-1, upper= 2,
+                               control=list(maxit=1000),
+                               fitDelta, plotPoints = TRUE, data=mb, 
+                               x1=names(sort(p45plog))[1],
+                               x2=names(sort(p45plog))[2],
+                               endpoint='ySurv'))
+  str(saResult)
+  plot(saResult$trace.mat[,1], saResult$trace.mat[,2], log='y')
+  plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
+       ylim=c(saResult$value, -92.5))
+  plot(saResult$trace.mat[,1], saResult$trace.mat[,4],
+       ylim=c(saResult$value, -92.7))
+  plot(saResult$trace.mat[,3], saResult$trace.mat[,4])
+  
+  #### evaluation ####
+  #### prediction from a fitQWLprobit model
+  # We calculate the onedimPredictor
+  testResult = fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
+                            b1 = 3, b2 = 5)
+  theFrame = attr(testResult, 'frame')
+  ls(env=theFrame)
+  #attach(theFrame)
+  with(theFrame, {
+    H=get('H', env=theFrame)
+    onedimPredictor(delta = delta)
+  }
+  )
+}
