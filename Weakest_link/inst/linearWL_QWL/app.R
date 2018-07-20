@@ -45,7 +45,35 @@ ui <- fluidPage(
                   value = 1)
     ),
     mainPanel(
-      plotOutput("distPlot", width = '600px', height = '600px')
+      plotOutput("distPlot", width = '600px', height = '600px'),
+      pre('
+For linear phi, at the COU phi1 = phi2, 
+so  a1+b1*x1 = a2+b2*x2.  
+If x1 and x2 are jointly normal, the corresponding CDFs are: p1 = pnorm(x1, mu1, sd1) and p2 = pnorm(x2, mu2, sd2) where
+x2 =  (a1+b1*x1 – a2)/b2. Thus
+           
+           p2 = pnorm(x2, mu2, sd2) =  pnorm( (a1+b1*x1 – a2)/b2,     mu2, sd2)
+           =  pnorm( ((a1+b1*(qnorm(p1, mu1, sd1)  – a2)/b2), mu2, sd2)
+
+This mapping from p1 to p2 gives us a comparison to the delta model.
+           
+Note that cor(x1,x2) has no effect on the COU.
+           
+From symmetry, 
+changing  a1 or mu1 makes a graph similar to the delta graphs,
+while changing  b1 or sd1 makes a graph sinusoidal.
+           
+Note that qnorm(p1, mu1, sd1)   = qnorm(p1) sd1 + mu1
+Setting b1=b2 and sd1 = sd2,
+p2 = pnorm( ((a1+b1*( qnorm(p1) sd1 + mu1  – a2)/b2), mu2, sd2)
+= pnorm( (a1-a2)/b2 + ( qnorm(p1) sd1 + mu1), mu2, sd2)
+= pnorm(  (qnorm(p1) sd1 + mu1 – mu2 )/sd2 )
+= pnorm ( qnorm(p1) + (mu1-mu2)/sd2 )
+           
+Defining H = qnorm and Hinv = pnorm, and 
+p2 = Hinv(  H(p1) + delta )
+where delta = (mu1-mu2)/sd2
+')
     )
   )
 )
