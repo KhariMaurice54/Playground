@@ -87,14 +87,42 @@ plot(saResult$trace.mat[,3], saResult$trace.mat[,4])
 We calculate the onedimPredictor
 
 ```{r}
-testResult = fitQWLprobit(testMe=TRUE, plottheData = FALSE, delta=1e-15, 
-                          b1 = 3, b2 = 5)
+testDelta = 0
+testResult = fitQWLprobit(
+  testMe=TRUE, 
+  plottheData = FALSE, delta=testDelta, 
+  b1 = 10, b2 = 10)
 theFrame = attr(testResult, 'frame')
 ls(env=theFrame)
+#get('Fhat2', env=theFrame)
 #attach(theFrame)
-with(theFrame, {
-  #onedimPredictor(delta = delta)
+onePredictor = with(theFrame, {
+  onedimPredictor(delta = testDelta, 
+                  p1 = theFrame$Fhat1, p2 = theFrame$Fhat2)
 }
 )
-
+pairs(data.frame(onePredictor, x1 = theFrame$x1, x2 = theFrame$x2) )
+pairs(data.frame(onePredictor, Fhat1 = theFrame$Fhat1, Fhat2 = theFrame$Fhat2) )
+data.frame(onePredictor, Fhat1 = theFrame$Fhat1, Fhat2 = theFrame$Fhat2)
+plot(onePredictor, theFrame$y)
+ROC = function(predictor=onePredictor, y=theFrame$y){
+  cutoff = sort(predictor)
+  cutoff = cutoff[-c(1,length(predictor))]
+  sensitivity = sapply(cutoff, function(cutoff1) {
+    positive = (predictor>=cutoff1)
+    mean( (y[positive] == 1))
+  } )
+  specificity = sapply(cutoff, function(cutoff1) {
+    negative = (predictor<cutoff1)
+    mean( (y[negative] == 0))
+  } )
+  print(((specificity)) )
+  print(length((sensitivity)) )
+  
+  plot(1 - (specificity), (sensitivity), 
+       xlab = 'FN', ylab = 'TN',
+       xlim = 0:1, ylim = 0:1, type='l')
+  print(data.frame(1 - specificity, sensitivity))
+}
+ROC()
 ```
