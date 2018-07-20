@@ -4,7 +4,6 @@
 .Ruserdata
 man
 src
-data
 *.html
 PAM50-references
 PAM50-R-code
