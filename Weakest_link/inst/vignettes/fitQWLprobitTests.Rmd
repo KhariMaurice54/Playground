@@ -1,0 +1,100 @@
+
+### fitQWLprobitTests
+
+```{r}
+require(WeakestLink)
+require(survival)
+p45test = sapply(p45, function(g) 
+  {
+  #cat('=== ', g, ' ===\n')
+  g = mb[[g]]
+  result = summary(coxph(Surv(time, cens) ~ g, data=mb) ) 
+  c(logtest=result$logtest['pvalue'], sctest=result$sctest['pvalue'])
+})
+p45plog = log10(p45test['logtest.pvalue', ])
+
+fitQWLprobit(testMe=TRUE, plottheData = FALSE, delta=1e-15, 
+             b1 = 3, b2 = 5)
+testData = WLContinuousdata( b1 = 3, b2 = 5)
+deltaSeq = seq(-3,3,length=100)
+resultSeq = sapply(deltaSeq, fitDelta, theData=testData)
+plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
+
+optResult = optimize(fitDelta, theData=testData,
+                     interval = c(-3,3), tol = 1e-3)
+abline(v=optResult$minimum, h=optResult$objective, col='red')
+```
+
+
+Now on real survival theData ####
+
+```{r}
+fitQWLprobit(theData = mb, delta=0,
+             x1=names(sort(p45plog))[1],
+             x2=names(sort(p45plog))[2],
+             endpoint='ySurv')
+deltaSeq = seq(0,3,length=500)
+resultSeq = sapply(deltaSeq, fitDelta, 
+                   theData=mb, 
+                   x1=names(sort(p45plog))[1],
+                   x2=names(sort(p45plog))[2],
+                   endpoint='ySurv' )
+plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
+
+optResult = optimize(fitDelta, theData=mb, 
+                     x1=names(sort(p45plog))[1],
+                     x2=names(sort(p45plog))[2],
+                     endpoint='ySurv',
+                     interval = c(-3,3), tol = 1e-7)
+abline(v=optResult$minimum, h=optResult$objective, col='red')
+```
+
+Now with GenSA
+
+```{r}
+
+require('GenSA')
+help(p='GenSA')
+plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
+abline(v=optResult$minimum, h=optResult$objective, col='red')
+
+system.time(saResult<<-GenSA(par=0, lower=-1, upper= 2,
+                             control=list(maxit=100),
+                             fitDelta, plotPoints = TRUE, theData=mb, 
+                             x1=names(sort(p45plog))[1],
+                             x2=names(sort(p45plog))[2],
+                             endpoint='ySurv'))
+str(saResult)
+abline(v=saResult$par, h=saResult$value, col='blue')
+
+```
+
+Now we plot the SA results.
+
+```{r}
+
+plot(saResult$trace.mat[,1], saResult$trace.mat[,2], log='y')
+plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
+     ylim=c(saResult$value, -92.5))
+plot(saResult$trace.mat[,1], saResult$trace.mat[,4],
+     ylim=c(saResult$value, -92.7))
+plot(saResult$trace.mat[,3], saResult$trace.mat[,4])
+```
+
+### Evaluation ####
+#### prediction from a fitQWLprobit model
+
+We calculate the onedimPredictor
+
+```{r}
+testResult = fitQWLprobit(testMe=TRUE, plottheData = FALSE, delta=1e-15, 
+                          b1 = 3, b2 = 5)
+theFrame = attr(testResult, 'frame')
+ls(env=theFrame)
+#attach(theFrame)
+with(theFrame, {
+  #onedimPredictor(delta = delta)
+}
+)
+
+```
