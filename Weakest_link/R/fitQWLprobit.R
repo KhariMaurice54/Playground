@@ -11,16 +11,22 @@ compare_cdfs = function() {
     Ptemp<-seq(0,1,length=length(p45x1))
   ), y=Ptemp, col='green', lwd=3)
 }
-onedimPredictor = function(delta, p1 = Fhat1, p2 = Fhat2){
+
+deltaMap = function(delta, p){
+  1 - H(Hinv(1-p) -  delta)
+}
+
+onedimPredictor = function(delta, 
+                           p1 = Fhat1, p2 = Fhat2){
   if(delta == 0) {
     phi2 <<- p2
   } else if(length(delta)==1) {
-    phi2 <<- 1 - H(Hinv(1-p2) -  delta)
+    phi2 <<- deltaMap(delta, p2)
   }
   pmin(p1, phi2)
 }
-fitOneDelta = function(delta) {
-  predictor = onedimPredictor(delta)
+fitOneDelta = function(delta, p1, p2, endpoint) {
+  predictor = onedimPredictor(delta, p1, p2)
   if(endpoint == 'ySurv') {
     require(survival)
     result = coxph(ySurv ~ predictor)
@@ -68,13 +74,13 @@ fitQWLprobit = function(data,
   H = inverselogit
   Hinv= logit
   if(length(delta) == 1)
-    result = fitOneDelta(delta)
+    result = fitOneDelta(delta, Fhat1, Fhat2, endpoint)
   else {
     deltaInterval = ifelse(missing(delta),
                            c(-3,3), delta)
     result = optimize(
       function(delta)
-        fitDelta(delta)$theAIC, 
+        fitDelta(delta, Fhat1, Fhat2, endpoint)$theAIC, 
       interval = deltaInterval, 
       tol = 1e-3)
   }  
@@ -104,7 +110,7 @@ fitQWLprobitTests = function() {
   fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
                b1 = 3, b2 = 5)
   testData = WLContinuousdata( b1 = 3, b2 = 5)
-  deltaSeq = seq(0,3,length=100)
+  deltaSeq = seq(-3,3,length=100)
   resultSeq = sapply(deltaSeq, fitDelta, data=testData)
   plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
   
@@ -129,7 +135,7 @@ fitQWLprobitTests = function() {
                        x1=names(sort(p45plog))[1],
                        x2=names(sort(p45plog))[2],
                        endpoint='ySurv',
-                       interval = c(0,3), tol = 1e-7)
+                       interval = c(-3,3), tol = 1e-7)
   abline(v=optResult$minimum, h=optResult$objective, col='red')
   
   install.packages('GenSA')
