@@ -66,13 +66,13 @@ while changing  b1 or sd1 makes a graph sinusoidal.
 Note that qnorm(p1, mu1, sd1)   = qnorm(p1) sd1 + mu1
 Setting b1=b2 and sd1 = sd2,
 p2 = pnorm( ((a1+b1*( qnorm(p1) sd1 + mu1  – a2)/b2), mu2, sd2)
-= pnorm( (a1-a2)/b2 + ( qnorm(p1) sd1 + mu1), mu2, sd2)
-= pnorm(  (qnorm(p1) sd1 + mu1 – mu2 )/sd2 )
-= pnorm ( qnorm(p1) + (mu1-mu2)/sd2 )
-           
+	= pnorm( (a1-a2)/b2 + ( qnorm(p1) sd1 + mu1), mu2, sd2)
+	= pnorm(  ( (a1-a2)/b2 + qnorm(p1) sd1 + mu1 – mu2 )/sd2 )
+	= pnorm ( ( qnorm(p1) + (mu1-mu2) +(a1-a2)/b2)/sd2 )
+
 Defining H = qnorm and Hinv = pnorm, and 
 p2 = Hinv(  H(p1) + delta )
-where delta = (mu1-mu2)/sd2
+where delta = (mu1-mu2+(a1-a2)/b2)/sd2
 ')
     )
   )
