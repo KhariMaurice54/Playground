@@ -4,9 +4,12 @@
 #' with Bernoulli outcomes Y and two predictors.
 #' E(Y) = min(phi1, phi2) where the phi are logits of linear functions of the predictors.
 #' 
+#' @param n Sample size
+#' @param a1,a2 Intercepts for inverselogit(phi) for each feature.
+#' @param b1,b2 Slopes for inverselogit(phi) for each feature.
 
 WLContinuousdata <-
-function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
+function(n = 200, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
   x1 = rnorm(n = n)
   x2 = rnorm(n = n)
   x1x2 = cbind(x1, x2)
@@ -17,7 +20,7 @@ function(n = 200, p0 = .1, p1 = .5, a1 = 1, a2 = 2, b1 = 1, b2 = 2){
   yprob = minphi
   y = rbinom(n = n, size = 1, prob = yprob)
   data = data.frame(x1, x2, y, minphi)
-  attr(data, "parameters") = c(p0 = p0, p1 = p1, a1 = a1, a2 = a2, b1 = b1, b2 = b2)
+  attr(data, "parameters") = c(a1 = a1, a2 = a2, b1 = b1, b2 = b2)
   return(data)
 }
 #WLContinuousdata()

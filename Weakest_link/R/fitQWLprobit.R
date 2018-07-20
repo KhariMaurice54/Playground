@@ -1,9 +1,15 @@
 #### fitQWLprobit:  fit a parametric weakest link model ####
 
+#' normcdf- empirical CDF fit to a vector x
+#'
+#' @param x A numeric vector.
+#' @return A vector of cumulative probabilities.
+#' 
 normcdf = function(x) pnorm(x, mean(x), sd(x))
 
+#' compare_cdfs- comparing normcdf to ecdf:
+
 compare_cdfs = function() {
-  ## comparing normcdf to ecdf:
   data(mb)
   p45x1 = mb[[ p45[1] ]]
   plot( ecdf(x = p45x1) )
@@ -12,9 +18,18 @@ compare_cdfs = function() {
   ), y=Ptemp, col='green', lwd=3)
 }
 
+
 deltaMap = function(delta, p){
   1 - H(Hinv(1-p) -  delta)
 }
+
+#' onedimPredictor
+#' 
+#' Combine two features into a single predictor.
+#' 
+#' @param delta An offset for the COU
+#' @param p1,p2 Probabilities
+#' @return The pmin (parallel min) of p1 and deltaMap(delta, p2) 
 
 onedimPredictor = function(delta, 
                            p1 = Fhat1, p2 = Fhat2){
@@ -25,6 +40,20 @@ onedimPredictor = function(delta,
   }
   pmin(p1, phi2)
 }
+
+#' fitOneDelta
+#' 
+#' Given a value of delta, which determines the COU locus,
+#' use coxph or glm to fit 
+#' the model with just the one predictor defined by the COU.
+#' 
+#' @param delta An offset for the COU
+#' @param p1,p2 CDF values for the two predictors
+#' @param endpoint Either the name of the target variable, or the string 'ySurv' to indicate a survival outcome.
+#' @return A list: 
+#' @field result The model resultoutcome object.
+#' @field AIC The AIC or other goodness of fit measure.
+#'  
 fitOneDelta = function(delta, p1, p2, endpoint) {
   predictor = onedimPredictor(delta, p1, p2)
   if(endpoint == 'ySurv') {
