@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+man
+src
+data
+*.html
+PAM50-references
+PAM50-R-code
+Connection between the linear phi model and the quantile stitching model.docx
+metabric 2
+richards-weaklink.R
+Weakest_link/misc/.gitignore
