@@ -54,28 +54,28 @@ onedimPredictor = function(delta,
 #' @field result The model resultoutcome object.
 #' @field AIC The AIC or other goodness of fit measure.
 #'  
-fitOneDelta = function(delta, p1, p2, endpoint) {
+fitOneDelta = function(delta, theData, p1, p2, endpoint) {
   predictor = onedimPredictor(delta, p1, p2)
   if(endpoint == 'ySurv') {
     require(survival)
-    result = coxph(ySurv ~ predictor)
+    result = coxph(ySurv ~ predictor, data=theData)
     #print(result)
     theAIC = 2 - 2*diff(result$loglik)
   }
   else {
-    if(all(data[[endpoint]] %in% c(0,1,NA) ) ) 
+    if(all(theData[[endpoint]] %in% c(0,1,NA) ) ) 
       fam = binomial
     else 
       fam = normal
-    result  = glm(y ~ predictor, family=binomial, data=data)
+    result  = glm(y ~ predictor, family=binomial, data=theData)
     theAIC = result$aic
   }
   return(list(result=result, theAIC=theAIC))
 }
 
-fitDelta = function(delta, plotPoints = FALSE,...) {
-  result = fitQWLprobit(testMe = FALSE,
-               plotData = FALSE, delta = delta,
+fitDelta = function(delta, theData, plotPoints = FALSE,...) {
+  result = fitQWLprobit(testMe = FALSE, theData,
+               plottheData = FALSE, delta = delta,
                ...
   )$theAIC
   if(plotPoints)
@@ -83,38 +83,36 @@ fitDelta = function(delta, plotPoints = FALSE,...) {
   return(result)
 }
 
-fitQWLprobit = function(data,
+fitQWLprobit = function(theData,
                         x1='x1', x2='x2',
                         endpoint='y', ## or 'ySurv'
                         delta, 
                         dir1 = TRUE, dir2 = TRUE, 
-                        testMe = FALSE, plotData = TRUE,
+                        testMe = FALSE, plottheData = TRUE,
                         ...) {
   if(testMe)
-    data = WLContinuousdata(...)
-  x1 = data[[x1]]
-  x2 = data[[x2]]
+    theData = WLContinuousdata(...)
+  x1 = theData[[x1]]
+  x2 = theData[[x2]]
   if(endpoint != 'ySurv')
-    y = data[[endpoint]]
+    y = theData[[endpoint]]
   if(endpoint == 'ySurv') 
-    assign('ySurv', attr(data, 'ySurv'), pos=1, immediate=TRUE)
+    assign('ySurv', attr(theData, 'ySurv'), pos=1, immediate=TRUE)
   Fhat1 = pnorm(x1, mean(x1), sd(x1)) * ifelse(dir1, 1, -1)
   Fhat2 = pnorm(x2, mean(x2), sd(x2)) * ifelse(dir2, 1, -1)
-  H = inverselogit
-  Hinv= logit
   if(length(delta) == 1)
-    result = fitOneDelta(delta, Fhat1, Fhat2, endpoint)
+    result = fitOneDelta(delta, theData, Fhat1, Fhat2, endpoint)
   else {
     deltaInterval = ifelse(missing(delta),
                            c(-3,3), delta)
     result = optimize(
       function(delta)
-        fitDelta(delta, Fhat1, Fhat2, endpoint)$theAIC, 
+        fitDelta(delta, theData, Fhat1, Fhat2, endpoint)$theAIC, 
       interval = deltaInterval, 
       tol = 1e-3)
   }  
   
-  if(plotData) {
+  if(plottheData) {
     plot(Fhat2, phi2)
     print(endpoint)
     if(endpoint=='ySurv')
@@ -135,67 +133,3 @@ fitQWLprobit = function(data,
   return(result )
 }
 
-
-fitQWLprobitTests = function() {
-  fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
-               b1 = 3, b2 = 5)
-  testData = WLContinuousdata( b1 = 3, b2 = 5)
-  deltaSeq = seq(-3,3,length=100)
-  resultSeq = sapply(deltaSeq, fitDelta, data=testData)
-  plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
-  
-  optResult = optimize(fitDelta, data=testData,
-                       interval = c(-3,3), tol = 1e-3)
-  abline(v=optResult$minimum, h=optResult$objective, col='red')
-  
-  ##### Now on real survival data ####
-  fitQWLprobit(data = mb, delta=0,
-               x1=names(sort(p45plog))[1],
-               x2=names(sort(p45plog))[2],
-               endpoint='ySurv')
-  deltaSeq = seq(0,3,length=500)
-  resultSeq = sapply(deltaSeq, fitDelta, 
-                     data=mb, 
-                     x1=names(sort(p45plog))[1],
-                     x2=names(sort(p45plog))[2],
-                     endpoint='ySurv' )
-  plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
-  
-  optResult = optimize(fitDelta, data=mb, 
-                       x1=names(sort(p45plog))[1],
-                       x2=names(sort(p45plog))[2],
-                       endpoint='ySurv',
-                       interval = c(-3,3), tol = 1e-7)
-  abline(v=optResult$minimum, h=optResult$objective, col='red')
-  
-  install.packages('GenSA')
-  help(p='GenSA')
-  require(GenSA)
-  system.time(saResult<<-GenSA(par=0, lower=-1, upper= 2,
-                               control=list(maxit=1000),
-                               fitDelta, plotPoints = TRUE, data=mb, 
-                               x1=names(sort(p45plog))[1],
-                               x2=names(sort(p45plog))[2],
-                               endpoint='ySurv'))
-  str(saResult)
-  plot(saResult$trace.mat[,1], saResult$trace.mat[,2], log='y')
-  plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
-       ylim=c(saResult$value, -92.5))
-  plot(saResult$trace.mat[,1], saResult$trace.mat[,4],
-       ylim=c(saResult$value, -92.7))
-  plot(saResult$trace.mat[,3], saResult$trace.mat[,4])
-  
-  #### evaluation ####
-  #### prediction from a fitQWLprobit model
-  # We calculate the onedimPredictor
-  testResult = fitQWLprobit(testMe=TRUE, plotData = FALSE, delta=1e-15, 
-                            b1 = 3, b2 = 5)
-  theFrame = attr(testResult, 'frame')
-  ls(env=theFrame)
-  #attach(theFrame)
-  with(theFrame, {
-    H=get('H', env=theFrame)
-    onedimPredictor(delta = delta)
-  }
-  )
-}
