@@ -66,10 +66,14 @@ server <- function(input, output) {
     x1 = qnorm(p1, mu1, sd1)
     x2 = ( a1+b1*x1 - a2)/b2
     p2 = pnorm( x2, mu2, sd2)
-    plot(p1, p2)
+    plot(p1, p2, col='green', cex=2, pch=16)
     for(delta in seq(-4,4,length=12))
       lines(p1vec<-seq(0,1,length=100),
             deltaMap(delta = delta, p1vec))
+    deltaEquiv = (a1-a2)/b2 + (mu1-mu2)/sd2
+    lines(p1vec<-seq(0,1,length=100),
+          deltaMap(delta = deltaEquiv, p1vec),
+          col='blue', lwd=3)
   })
 }
 
