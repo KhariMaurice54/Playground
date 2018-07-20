@@ -1,9 +1,10 @@
 Package: WeakestLink
 Type: Package
-Title: What the package does (short line)
-Version: 0.1
-Date: 2018-06-20
-Author: Khari Smith
-Maintainer: Who to complain to <kharimauriceschool@gmail.com>
-Description: More about what it does (maybe more than one line)
+Title: Fit and test weakest link models
+Version: 0.2
+Date: 2018-07-18
+Author: Khari Smith and Roger Day
+Maintainer: <kharimauriceschool@gmail.com>
+Description: Fit and test weakest link models
 License: GPL
+RoxygenNote: 6.0.1
