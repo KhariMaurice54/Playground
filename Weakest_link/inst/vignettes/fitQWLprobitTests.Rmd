@@ -51,7 +51,7 @@ abline(v=optResult$minimum, h=optResult$objective, col='red')
 
 Now with GenSA
 
-```{r}
+```{r eval=FALSE}
 
 require('GenSA')
 help(p='GenSA')
@@ -71,7 +71,7 @@ abline(v=saResult$par, h=saResult$value, col='blue')
 
 Now we plot the SA results.
 
-```{r}
+```{r eval=FALSE}
 
 plot(saResult$trace.mat[,1], saResult$trace.mat[,2], log='y')
 plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
