@@ -99,14 +99,16 @@ onedimPredictorThreeWay = function(delta12, delta13,
 #' use coxph or glm to fit 
 #' the model with just the one predictor defined by the COU.
 #' 
-#' @param delta An offset for the COU
+#' @param delta The fixed value of delta, an offset for the COU
+#' @param theData Data set.
 #' @param p1,p2 CDF values for the two predictors
 #' @param endpoint Either the name of the target variable, or the string 'ySurv' to indicate a survival outcome.
+#' @param plotPoints If TRUE, add evaluated points to a plot of the AIC vs delta
 #' @return A list: 
-#' @field result The model result outcome object.
-#' @field AIC The AIC or other goodness of fit measure.
+#' @return  result: The model result outcome object.
+#' @return AIC: The AIC or other goodness of fit measure.
 #'  
-fitOneDelta = function(delta, theData, p1, p2, endpoint) {
+fitWithFixedDelta = function(delta, theData, p1, p2, endpoint, plotPoints = FALSE) {
   predictor = onedimPredictor(delta, p1, p2)
   if(endpoint == 'ySurv') {
     require(survival)
@@ -122,30 +124,20 @@ fitOneDelta = function(delta, theData, p1, p2, endpoint) {
     result  = glm(y ~ predictor, family=binomial, data=theData)
     theAIC = result$aic
   }
+  if(plotPoints) {
+    tryResult = try(points(delta, theAIC, col='blue', pch='X') )
+    if(class(tryResult)=='try-error')
+      warning('Cannot plot points; probably no active plot.')
+  }
   return(list(result=result, theAIC=theAIC))
-}
-
-#' fitDelta
-#' 
-#' fit the QWL model for a fixed delta parameter
-#' 
-#' @param delta The fixed value of delta.
-#' @param theData Data set.
-#' @param pointPoints If TRUE, plot the x1 vs x2 data points, with different characters for y values
-#' @param ...  Ignored, possible future args to pass. 
-fitDelta = function(delta, theData, plotPoints = FALSE,...) {
-  result = fitQWLprobit(testMe = FALSE, theData,
-               plottheData = FALSE, delta = delta,
-               ...
-  )$theAIC
-  if(plotPoints)
-    points(delta, result, col='blue', pch='X')
-  return(result)
 }
 
 #' fitQWLprobit
 #' 
 #' Fit a QWL (probit quantile-stitched weakest link model)
+#' @param delta The fixed value of delta.
+#' @param theData Data set.
+#' @param plottheData If TRUE, plot the x1 vs x2 data points, with different characters for y values
 fitQWLprobit = function(theData,
                         x1='x1', x2='x2',
                         endpoint='y', ## or 'ySurv'
@@ -153,7 +145,6 @@ fitQWLprobit = function(theData,
                         dir1 = TRUE, dir2 = TRUE, 
                         testMe = FALSE, plottheData = TRUE,
                         ...) {
-  inside_fitQWLprobit = TRUE
   if(testMe)
     theData = WLContinuousdata(...)
   x1 = theData[[x1]]
@@ -165,13 +156,13 @@ fitQWLprobit = function(theData,
   Fhat1 = pnorm(x1, mean(x1), sd(x1)) * ifelse(dir1, 1, -1)
   Fhat2 = pnorm(x2, mean(x2), sd(x2)) * ifelse(dir2, 1, -1)
   if(length(delta) == 1)
-    result = fitOneDelta(delta, theData, Fhat1, Fhat2, endpoint)
+    result = fitWithFixedDelta(delta, theData, Fhat1, Fhat2, endpoint)
   else {
     deltaInterval = ifelse(missing(delta),
                            c(-3,3), delta)
     result = optimize(
       function(delta)
-        fitDelta(delta, theData, Fhat1, Fhat2, endpoint)$theAIC, 
+        fitWithFixedDelta(delta, theData, Fhat1, Fhat2, endpoint)$theAIC, 
       interval = deltaInterval, 
       tol = 1e-3)
   }  
