@@ -1,4 +1,5 @@
 library(shiny)
+require(WeakestLink)
 ui <- fluidPage(
   titlePanel("Comparing the WL linear and the QWL model"),
   sidebarLayout(
