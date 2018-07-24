@@ -50,7 +50,50 @@ onedimPredictor = function(delta,
   pmin(p1, phi2)
 }
 
-#' fitOneDelta
+#' onedimPredictorThreeWay
+#' 
+#' Combine THREE features into a single predictor.
+#' 
+#' @param delta12,delta13 Offsets for quantile mapping, for forming the COU
+#' @param p1,p2,p3 Probabilities
+#' @return The pmin (parallel min) of p1 and deltaMap(delta, p2) 
+#' @examples {
+#' pvec = seq(0,1,length=5)
+#' p1p2p3 = expand.grid(pvec,pvec,pvec)
+#' result = apply(p1p2p3, 1, function(r) {
+#'   p1 = r[1]; p2 = r[2]; p3 = r[3]; 
+#'   onedimPredictorThreeWay(0.5, 1, p1=p1, p2=p2, p3=p3)
+#' } )
+#' p1p2p3r = cbind(p1p2p3, result)
+#' names(p1p2p3r) = c('p1','p2','p3', 'result')
+#' howManyIsWL = apply(p1p2p3r, 1, function(r){
+#'          sum(r[4]==r[1:3]) }  )
+#' table(howManyIsWL)
+#' whichIsWL = apply(p1p2p3r, 1, function(r){
+#'     which(r[4]==r[1:3]) [1]}  )
+#' pchWL = c('a','b','c')[whichIsWL]
+#' pchWL[howManyIsWL > 1] = 'T'
+#' pairs(p1p2p3r, pch = pchWL, col=(2:5)[match(pchWL, c('a','b','c', 'T'))])
+#' }
+
+onedimPredictorThreeWay = function(delta12, delta13, 
+                           p1 = Fhat1, p2 = Fhat2, p3 = Fhat3){
+  if(length(delta12) > 1) stop('delta12 length must be 1')
+  if(length(delta13) > 1) stop('delta13 length must be 1')
+  if(delta12 == 0) {
+    phi2 <<- p2
+  } else  {
+    phi2 <<- deltaMap(delta12, p2)
+  }
+  if(delta13 == 0) {
+    phi3 <<- p3
+  } else  {
+    phi3 <<- deltaMap(delta13, p3)
+  }
+  pmin(p1, phi2, phi3)
+}
+
+#' fitWithFixedDelta
 #' 
 #' Given a value of delta, which determines the COU locus,
 #' use coxph or glm to fit 
