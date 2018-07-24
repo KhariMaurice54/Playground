@@ -8,6 +8,9 @@
 normcdf = function(x) pnorm(x, mean(x), sd(x))
 
 #' compare_cdfs- comparing normcdf to ecdf:
+#' 
+#' compare_cdfs plots the two cdf's for a particular gene p45[1] CCNB1
+#' @details Plots the empirical cdf and the normal-fit cdf.
 
 compare_cdfs = function() {
   data(mb)
@@ -18,7 +21,12 @@ compare_cdfs = function() {
   ), y=Ptemp, col='green', lwd=3)
 }
 
-
+#' deltaMap
+#' 
+#' Map from [0,1] to [0,1]
+#' @param delta A parameter for the map. delta=zero gives the identity function.
+#' @param p An input value or vector to the map.
+#' 
 deltaMap = function(delta, p){
   1 - H(Hinv(1-p) -  delta)
 }
@@ -51,7 +59,7 @@ onedimPredictor = function(delta,
 #' @param p1,p2 CDF values for the two predictors
 #' @param endpoint Either the name of the target variable, or the string 'ySurv' to indicate a survival outcome.
 #' @return A list: 
-#' @field result The model resultoutcome object.
+#' @field result The model result outcome object.
 #' @field AIC The AIC or other goodness of fit measure.
 #'  
 fitOneDelta = function(delta, theData, p1, p2, endpoint) {
@@ -73,6 +81,14 @@ fitOneDelta = function(delta, theData, p1, p2, endpoint) {
   return(list(result=result, theAIC=theAIC))
 }
 
+#' fitDelta
+#' 
+#' fit the QWL model for a fixed delta parameter
+#' 
+#' @param delta The fixed value of delta.
+#' @param theData Data set.
+#' @param pointPoints If TRUE, plot the x1 vs x2 data points, with different characters for y values
+#' @param ...  Ignored, possible future args to pass. 
 fitDelta = function(delta, theData, plotPoints = FALSE,...) {
   result = fitQWLprobit(testMe = FALSE, theData,
                plottheData = FALSE, delta = delta,
@@ -83,6 +99,9 @@ fitDelta = function(delta, theData, plotPoints = FALSE,...) {
   return(result)
 }
 
+#' fitQWLprobit
+#' 
+#' Fit a QWL (probit quantile-stitched weakest link model)
 fitQWLprobit = function(theData,
                         x1='x1', x2='x2',
                         endpoint='y', ## or 'ySurv'
@@ -90,6 +109,7 @@ fitQWLprobit = function(theData,
                         dir1 = TRUE, dir2 = TRUE, 
                         testMe = FALSE, plottheData = TRUE,
                         ...) {
+  inside_fitQWLprobit = TRUE
   if(testMe)
     theData = WLContinuousdata(...)
   x1 = theData[[x1]]
