@@ -45,7 +45,8 @@ onedimPredictor = function(delta,
     phi2 <<- p2
   } else if(length(delta)==1) {
     phi2 <<- deltaMap(delta, p2)
-  }
+  } else
+    phi2 <<- sapply(delta, deltaMap, p = p2)
   pmin(p1, phi2)
 }
 
