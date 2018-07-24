@@ -149,7 +149,10 @@ fitQWLprobit = function(theData,
     matching_x2 = qnorm(matching_P2, mean=mean(x2), sd=sd(x2))
     lines(x1[order(x1)], matching_x2[order(x1)] )
   }
-  attr(result, 'frame') = sys.frame(1)
+  theframes = sys.frames()
+  numframes = length( theframes)
+  fr = sys.frame(numframes)
+  attr(result, 'frame') = fr
   return(result )
 }
 
