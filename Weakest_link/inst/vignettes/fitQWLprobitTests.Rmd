@@ -116,13 +116,9 @@ ROC = function(predictor=onePredictor, y=theFrame$y){
     negative = (predictor<cutoff1)
     mean( (y[negative] == 0))
   } )
-  print(((specificity)) )
-  print(length((sensitivity)) )
-  
   plot(1 - (specificity), (sensitivity), 
        xlab = 'FN', ylab = 'TN',
        xlim = 0:1, ylim = 0:1, type='l')
-  print(data.frame(1 - specificity, sensitivity))
 }
 ROC()
 ```
