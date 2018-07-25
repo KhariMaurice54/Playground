@@ -66,8 +66,20 @@ if(interactive()) {
   colValue = c('white', 'red', 'blue')[match(mb$D7, c(NA, 0 , 1))]
   plot(mb[[g1]], mb[[g2]], 
        pch = pchValue, col = colValue, cex=0.5)
+  
   #### Now, all the pairs.
-  apply(genepairs, 1, analyzeAPair, delta=c(-3,3), 
-        endpoint = 'ySurv')
+  allResults = apply(genepairs[1:6, ], 1, function(aRow) {
+    g1=aRow[1]; g2=aRow[2]
+    analyzeAPair(
+        g1=g1, g2=g2, 
+        endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
+        delta = 'fit',
+        plottheData= TRUE)
+    drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, 
+            FhatStyle = 'normal',
+            col='blue')
+    drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, 
+            FhatStyle = 'ecdf',
+            col='purple')
+  } )
 }
-

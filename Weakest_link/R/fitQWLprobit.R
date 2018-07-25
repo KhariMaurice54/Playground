@@ -201,6 +201,7 @@ fitQWLprobit = function(theData,
   
   if(plottheData) {
     plot(Fhat2, phi2)
+    title(paste('delta = ', signif(digits=3,delta) ) )
     #print(endpoint)
     if(class(endpoint)=='Surv')
       colorChoice =  1+endpoint[ , 'status']
