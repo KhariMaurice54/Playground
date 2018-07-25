@@ -51,7 +51,7 @@ abline(v=optResult$minimum, h=optResult$objective, col='red')
 
 Now with GenSA
 
-```{r}
+```{r eval=FALSE}
 
 require('GenSA')
 help(p='GenSA')
@@ -71,7 +71,7 @@ abline(v=saResult$par, h=saResult$value, col='blue')
 
 Now we plot the SA results.
 
-```{r}
+```{r eval=FALSE}
 
 plot(saResult$trace.mat[,1], saResult$trace.mat[,2], log='y')
 plot(saResult$trace.mat[,1], saResult$trace.mat[,3],
@@ -116,13 +116,9 @@ ROC = function(predictor=onePredictor, y=theFrame$y){
     negative = (predictor<cutoff1)
     mean( (y[negative] == 0))
   } )
-  print(((specificity)) )
-  print(length((sensitivity)) )
-  
   plot(1 - (specificity), (sensitivity), 
        xlab = 'FN', ylab = 'TN',
        xlim = 0:1, ylim = 0:1, type='l')
-  print(data.frame(1 - specificity, sensitivity))
 }
 ROC()
 ```
