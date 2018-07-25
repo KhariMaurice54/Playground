@@ -7,6 +7,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 require(WeakestLink)
+require(survival)
 ```
 
 This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
@@ -45,12 +46,19 @@ inputPanel(
   ) 
 )
 
-renderPlot({
-  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$chosen_data),
-       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+renderPlot({ 
+ g1= input$Gene1
+ g2= input$Gene2
+ print(g2)
+ resultFitted = analyzeAPair(g1 = g1, g2 = g2,
+                        endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
+                        delta = 'fit',
+                        plottheData= TRUE)
+  drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'normal',
+          col='blue')
+  drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'ecdf',
+          col='purple')
   
-  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
-  lines(dens, col = "blue")
 })
 ```
 
