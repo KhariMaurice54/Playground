@@ -172,6 +172,11 @@ fitQWLprobit = function(theData,
     x2 = theData[[x2]]
   }
   else x2name = 'x2'
+  if(length(endpoint)==1 & is.character(endpoint)) {
+    yname = endpoint
+    endpoint = theData[[endpoint]]
+  }
+  else yname = 'y'
   # if(class(endpoint) == 'Surv')
   #   y = theData[[endpoint]]
   if(identical(endpoint, 'ySurv') )
