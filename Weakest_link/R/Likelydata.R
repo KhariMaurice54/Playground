@@ -1,3 +1,9 @@
+#' @param data temporary dataset the function is working with
+#' @param a1 intercept for inverselogit(phi2(x2))
+#' @param a2 slope for inverselogit(phi1(x1))
+#' @param b1 slope for inverselogit(phi2(x2))
+#' @param b2 slope for inverselogit(phi2(x2))
+#' @param ... Parameters passed to \code{abline()}
 Likelydata <-
 function(data = temp, a1 = 1, a2 = 2, b1 = 1, b2 = 2, a1a2b1b2){
   if(!missing(a1a2b1b2)){
