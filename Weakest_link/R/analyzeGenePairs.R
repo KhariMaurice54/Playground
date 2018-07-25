@@ -29,6 +29,7 @@ analyzeAPair = function(g12, g1, g2, endpoint, delta='fit',
 }
 
 if(interactive()) {
+  require(survival)
   allPHmodels = lapply(p45, function(g) {
     theGene = g
     summary(coxph(formula= as.formula(
@@ -38,6 +39,7 @@ if(interactive()) {
   allCoxLogLik = sapply(allPHmodels, diff)
   names(allCoxLogLik) = p45
   summary(allCoxLogLik)
+  tail(sort(allCoxLogLik))
   
   #### all pairs ####
   genepairs = expand.grid(sort(p45), sort(p45), 
@@ -56,10 +58,14 @@ if(interactive()) {
                         delta = 'fit',
                         plottheData= TRUE)
   drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'normal',
-          col='red')
+          col='blue')
+  drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'ecdf',
+          col='purple')
+  
   resultFixed0 = analyzeAPair(g1=g1, g2=g2, 
                endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
-               delta = 0)
+               delta = 0,
+               plottheData= TRUE)
   resultFixed0$result$coefficients
   summary(resultFixed0$result)[2]
   pchValue = c(' ', '0', '1')[match(mb$D7, c(NA, 0 , 1))]
