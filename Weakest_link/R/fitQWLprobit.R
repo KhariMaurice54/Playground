@@ -109,19 +109,24 @@ onedimPredictorThreeWay = function(delta12, delta13,
 #' @return AIC: The AIC or other goodness of fit measure.
 #'  
 fitWithFixedDelta = function(delta, theData, p1, p2, endpoint, plotPoints = FALSE) {
+  require(survival)
   predictor = onedimPredictor(delta, p1, p2)
-  if(endpoint == 'ySurv') {
-    require(survival)
-    result = coxph(ySurv ~ predictor, data=theData)
+  if(identical(endpoint, 'ySurv') ) 
+    endpoint = with(theData, Surv(time, cens) )
+  if(class(endpoint) == 'Surv') {
+    result = coxph(endpoint ~ predictor, data=theData)
     #print(result)
     theAIC = 2 - 2*diff(result$loglik)
   }
   else {
-    if(all(theData[[endpoint]] %in% c(0,1,NA) ) ) 
+    if(class(endpoint)=='character')
+      endpoint = theData[[endpoint]]
+    if(all(endpoint %in% c(0,1,NA) ) ) 
       fam = binomial
     else 
       fam = normal
-    result  = glm(y ~ predictor, family=binomial, data=theData)
+    result  = glm(endpoint ~ predictor, 
+                  family=fam, data=theData)
     theAIC = result$aic
   }
   if(plotPoints) {
@@ -141,48 +146,69 @@ fitWithFixedDelta = function(delta, theData, p1, p2, endpoint, plotPoints = FALS
 fitQWLprobit = function(theData,
                         x1='x1', x2='x2',
                         endpoint='y', ## or 'ySurv'
+                        covariates = 1, 
                         delta, 
                         dir1 = TRUE, dir2 = TRUE, 
                         testMe = FALSE, plottheData = TRUE,
                         ...) {
   if(testMe)
     theData = WLContinuousdata(...)
-  x1 = theData[[x1]]
-  x2 = theData[[x2]]
-  if(endpoint != 'ySurv')
-    y = theData[[endpoint]]
-  if(endpoint == 'ySurv') 
-    assign('ySurv', attr(theData, 'ySurv'), pos=1, immediate=TRUE)
+  if(length(x1)==1 & is.character(x1)) {
+    x1name = x1
+    x1 = theData[[x1]]
+  }
+  else x1name = 'x1'
+  if(length(x2)==1 & is.character(x2)) {
+    x2name = x2
+    x2 = theData[[x2]]
+  }
+  else x2name = 'x2'
+  # if(class(endpoint) == 'Surv')
+  #   y = theData[[endpoint]]
+  if(identical(endpoint, 'ySurv') )
+    endpoint = Surv(theData$time, theData$cens)
+  #assign('ySurv', attr(theData, 'ySurv'), pos=1, immediate=TRUE)
   Fhat1 = pnorm(x1, mean(x1), sd(x1)) * ifelse(dir1, 1, -1)
   Fhat2 = pnorm(x2, mean(x2), sd(x2)) * ifelse(dir2, 1, -1)
   if(length(delta) == 1)
     result = fitWithFixedDelta(delta, theData, Fhat1, Fhat2, endpoint)
   else {
-    deltaInterval = ifelse(missing(delta),
-                           c(-3,3), delta)
-    result = optimize(
-      function(delta)
-        fitWithFixedDelta(delta, theData, Fhat1, Fhat2, endpoint)$theAIC, 
-      interval = deltaInterval, 
-      tol = 1e-3)
+      if(missing(delta))
+        deltaInterval = c(-3,3)
+      else 
+        deltaInterval = delta
+      optimizeMe = function(delta)
+        fitWithFixedDelta(delta, theData, Fhat1, Fhat2, endpoint)$theAIC 
+      optresult = optimize(optimizeMe,
+                        interval = deltaInterval, 
+                        tol = 1e-3)
+      optdelta = optresult$minimum #  minimizer!
+      optAIC = optresult$objective 
+      result = fitWithFixedDelta(optdelta, theData, Fhat1, Fhat2, endpoint)
+      attr(result, 'optAIC') = optAIC
+      attr(result, 'optdelta') = optdelta
+      delta = optdelta   # for plotting
   }  
   
   if(plottheData) {
     plot(Fhat2, phi2)
     print(endpoint)
-    if(endpoint=='ySurv')
-      colorChoice =  1+ySurv[ , 'status']
+    if(class(endpoint)=='Surv')
+      colorChoice =  1+endpoint[ , 'status']
     else
-      colorChoice = 1 + (y > median(y)) 
+      colorChoice = 1 + (endpoint ) 
+    #colorChoice = 1 + (endpoint > median(endpoint)) 
     print(table(colorChoice))
     plot(x1, x2, pch=c('0','1')[colorChoice], 
-         col=c('red','green')[colorChoice])
+         col=c('red','green')[colorChoice],
+         xlab = x1name, ylab = x2name)
     # COU is where phi1 = phi2, Fhat1 = phi2,
     #  But phi2 = 1 - H(Hinv(1-Fhat2) -  delta),
     # so Fhat2 = 1 - H(Hinv(1 - Fhat1) + delta)
     matching_P2 = 1 - H(Hinv(1 - Fhat1) + delta)
     matching_x2 = qnorm(matching_P2, mean=mean(x2), sd=sd(x2))
     lines(x1[order(x1)], matching_x2[order(x1)] )
+    title(paste('delta = ', signif(delta, digits=2)) )
   }
   theframes = sys.frames()
   numframes = length( theframes)
