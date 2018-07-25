@@ -137,6 +137,13 @@ fitWithFixedDelta = function(delta, theData, p1, p2, endpoint, plotPoints = FALS
   return(list(result=result, theAIC=theAIC))
 }
 
+cdf = function(x, FhatStyle=c('normal', 'ecdf')[1]){
+  if(FhatStyle == 'normal') 
+    return(pnorm(x, mean(x), sd(x)) )
+  if(FhatStyle == 'ecdf') 
+    return(ecdf(x)(x) )
+}
+  
 #' fitQWLprobit
 #' 
 #' Fit a QWL (probit quantile-stitched weakest link model)
@@ -149,7 +156,9 @@ fitQWLprobit = function(theData,
                         covariates = 1, 
                         delta, 
                         dir1 = TRUE, dir2 = TRUE, 
-                        testMe = FALSE, plottheData = TRUE,
+                        testMe = FALSE, 
+                        plottheData = TRUE, 
+                        FhatStyle=c('normal', 'ecdf')[1],
                         ...) {
   if(testMe)
     theData = WLContinuousdata(...)
@@ -168,8 +177,8 @@ fitQWLprobit = function(theData,
   if(identical(endpoint, 'ySurv') )
     endpoint = Surv(theData$time, theData$cens)
   #assign('ySurv', attr(theData, 'ySurv'), pos=1, immediate=TRUE)
-  Fhat1 = pnorm(x1, mean(x1), sd(x1)) * ifelse(dir1, 1, -1)
-  Fhat2 = pnorm(x2, mean(x2), sd(x2)) * ifelse(dir2, 1, -1)
+  Fhat1 = cdf(x1, FhatStyle) * ifelse(dir1, 1, -1)
+  Fhat2 = cdf(x2, FhatStyle) * ifelse(dir1, 1, -1)
   if(length(delta) == 1)
     result = fitWithFixedDelta(delta, theData, Fhat1, Fhat2, endpoint)
   else {
@@ -192,22 +201,17 @@ fitQWLprobit = function(theData,
   
   if(plottheData) {
     plot(Fhat2, phi2)
-    print(endpoint)
+    #print(endpoint)
     if(class(endpoint)=='Surv')
       colorChoice =  1+endpoint[ , 'status']
     else
       colorChoice = 1 + (endpoint ) 
     #colorChoice = 1 + (endpoint > median(endpoint)) 
-    print(table(colorChoice))
+    #print(table(colorChoice))
     plot(x1, x2, pch=c('0','1')[colorChoice], 
          col=c('red','green')[colorChoice],
          xlab = x1name, ylab = x2name)
-    # COU is where phi1 = phi2, Fhat1 = phi2,
-    #  But phi2 = 1 - H(Hinv(1-Fhat2) -  delta),
-    # so Fhat2 = 1 - H(Hinv(1 - Fhat1) + delta)
-    matching_P2 = 1 - H(Hinv(1 - Fhat1) + delta)
-    matching_x2 = qnorm(matching_P2, mean=mean(x2), sd=sd(x2))
-    lines(x1[order(x1)], matching_x2[order(x1)] )
+    drawCOU(x1, x2, delta, FhatStyle) 
     title(paste('delta = ', signif(delta, digits=2)) )
   }
   theframes = sys.frames()
@@ -216,4 +220,16 @@ fitQWLprobit = function(theData,
   attr(result, 'frame') = fr
   return(result )
 }
-
+# COU is where phi1 = phi2, same as Fhat1 = phi2,
+#  But phi2 = 1 - H(Hinv(1-Fhat2) -  delta),
+# so Fhat2 = 1 - H(Hinv(1 - Fhat1) + delta)
+drawCOU = function(x1, x2, delta, FhatStyle, ...) {
+  Fhat1 = cdf(x1, FhatStyle)
+  matching_P2 = 1 - H(Hinv(1 - Fhat1) + delta)
+  if(FhatStyle == 'normal')
+    matching_x2 = qnorm(matching_P2, mean=mean(x2), sd=sd(x2))
+  if(FhatStyle == 'ecdf') 
+    matching_x2 = quantile(x = x2, probs = matching_P2)
+  lines(x1[order(x1)], matching_x2[order(x1)],
+        ...)
+}
