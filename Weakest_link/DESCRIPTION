@@ -1,10 +1,11 @@
 Package: WeakestLink
 Type: Package
 Title: Fit and test weakest link models
-Version: 0.2
-Date: 2018-07-18
+Version: 0.3
+Date: 2018-07-26
 Author: Khari Smith and Roger Day
 Maintainer: <kharimauriceschool@gmail.com>
 Description: Fit and test weakest link models
+Imports: survival, shiny, devtools, magrittr, shinyBS, knitr, rmarkdown
 License: GPL
 RoxygenNote: 6.0.1
