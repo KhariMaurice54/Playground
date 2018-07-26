@@ -205,8 +205,8 @@ fitQWLprobit = function(theData,
   }  
   
   if(plottheData) {
-    plot(Fhat2, phi2)
-    title(paste('delta = ', signif(digits=3,delta) ) )
+    #plot(Fhat2, phi2)
+    #title(paste('delta = ', signif(digits=3,delta) ) )
     #print(endpoint)
     if(class(endpoint)=='Surv')
       colorChoice =  1+endpoint[ , 'status']
@@ -226,9 +226,38 @@ fitQWLprobit = function(theData,
   attr(result, 'frame') = fr
   return(result )
 }
-# COU is where phi1 = phi2, same as Fhat1 = phi2,
-#  But phi2 = 1 - H(Hinv(1-Fhat2) -  delta),
-# so Fhat2 = 1 - H(Hinv(1 - Fhat1) + delta)
+
+#' drawCOU
+#' 
+#' Draws the COU for a member of the delta family.
+#' @details {
+#' COU is the set {(x1,x2): phi1(x1) = phi2(x2)}.
+#' Equivalently, {(x1,x2): x2 = phi2inv ( phi1(x1) }.
+#' 
+#' For the quantile stitch weakest link model (QWL),
+#' a one-dim predictor is constructed by postulating the locus
+#' phi2inv o phi1. 
+#' 
+#' Quantile stitching says that F2(x2) = F1(x1) on the COU.
+#' 
+#' So F2(phi2inv ( phi1(F1inv(P)) = P. 
+#' 
+#'     F2 o phi2inv o phi1 o F1inv = identity.
+#'     
+#'      phi2inv o phi1 = F2inv o F1. This maps x1 to x2 on the COU.
+#'      
+#'      x2 = COU(x1) = F2inv ( F1(x1) ).
+#'      
+#' This COU is in a family of possible COU's indexed by delta:
+#' 
+#'      x2 = COU(x1) = F2inv ( 1 - H( Hinv(1 - F1(x1)) + delta) )
+#'      
+#' where H: R-> [0,1]  is symmetric: H(-z) = 1 - H(z)
+#' 
+#' such as the inverse logit or pnorm.
+#' 
+#'      x1 = COUinv(x2) = F1inv ( 1 - H( Hinv(1 - F2(x2)) - delta) )
+#' }
 drawCOU = function(x1, x2, delta, FhatStyle, ...) {
   Fhat1 = cdf(x1, FhatStyle)
   matching_P2 = 1 - H(Hinv(1 - Fhat1) + delta)
