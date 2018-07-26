@@ -26,28 +26,51 @@ analyzeAPair = function(g12, g1, g2, endpoint, delta='fit',
                       p2 = normcdf(d12$x2),
                       ...
     )
+  #  FOXA1 MYBL2
   if(printBoxplot) {
-    boxplot(result$result$linear.predictors ~ mb$D7)
+    par(mfrow=c(1,3))
+    boxplot(result$result$linear.predictors ~ mb$D7,
+            xlab="died by 7 years", ylab='WL predictor')
     title(paste(g1, g2, signif(digits=4,result$theAIC)) )
+    boxplot(mb[[g1]] ~ mb$D7,
+            xlab="died by 7 years", ylab=g1)
+    title(g1)
+    boxplot(mb[[g2]] ~ mb$D7,
+            xlab="died by 7 years", ylab=g2)
+    title(g2)
+    par(mfrow=c(1,1))
   }
-  title()
-  
   return(result)
 }
 
-if(interactive()) {
-  require(survival)
+oneGeneResult = function(gene, plotMe=TRUE) {
+  result = glm(mb$D7 ~ mb[[gene]], family=binomial)$aic
+  return(result)
+}
+
+analyzeAllGenes = function(plotBoxplots = TRUE){
+  #### how about single genes? ####
+  allAICbyGene = sapply(p45, oneGeneResult)
+  lowestAIC = head(sort(allAICbyGene))
+  for(geneNum in head(order(allAICbyGene)) ) {
+    gene = p45[geneNum]
+    boxplot(mb[[gene]] ~ mb$D7, 
+            xlab="died by 7 years", ylab=g2ene)
+    title(paste(gene, signif(digits=5, allAICbyGene[gene]) ))
+  }
   allPHmodels = lapply(p45, function(g) {
     theGene = g
-    summary(coxph(formula= as.formula(
-      paste('Surv(time,cens) ~ ', g)), data=mb, model = F, x = F, y=F)
+    theFormula = as.formula(paste('Surv(time,cens) ~ ', theGene))
+    summary(coxph(formula= theFormula, data=mb, 
+      model = F, x = F, y=F)
     )$loglik
   })
   allCoxLogLik = sapply(allPHmodels, diff)
   names(allCoxLogLik) = p45
   summary(allCoxLogLik)
   tail(sort(allCoxLogLik))
-  
+}
+analyzeAllGenePairs = function() {  
   #### all pairs ####
   genepairs = expand.grid(sort(p45), sort(p45), 
                           stringsAsFactors = FALSE)
@@ -62,18 +85,18 @@ if(interactive()) {
   randomRow = genepairs[sample(nrow(genepairs), 1), ]
   g1=randomRow[1]; g2=randomRow[2]
   resultFitted = analyzeAPair(g1=g1, g2=g2, 
-                        endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
-                        delta = 'fit',
-                        plottheData= TRUE)
+                              endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
+                              delta = 'fit',
+                              plottheData= TRUE)
   drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'normal',
           col='blue')
   drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'ecdf',
           col='purple')
   
   resultFixed0 = analyzeAPair(g1=g1, g2=g2, 
-               endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
-               delta = 0,
-               plottheData= TRUE)
+                              endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
+                              delta = 0,
+                              plottheData= TRUE)
   resultFixed0$result$coefficients
   summary(resultFixed0$result)[2]
   pchValue = c(' ', '0', '1')[match(mb$D7, c(NA, 0 , 1))]
@@ -85,10 +108,10 @@ if(interactive()) {
   oneRowResult = function(aRow, plottheData= TRUE) {
     g1=aRow[1]; g2=aRow[2]
     result = analyzeAPair(
-        g1=g1, g2=g2, 
-        endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
-        delta = 'fit',
-        plottheData= plottheData)
+      g1=g1, g2=g2, 
+      endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
+      delta = 'fit',
+      plottheData= plottheData)
     if(plottheData) {
       drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, 
               FhatStyle = 'normal',
@@ -104,17 +127,9 @@ if(interactive()) {
   names(allResults) = apply(genepairs, 1, paste, collapse=',')
   allAIC = sapply(allResults, `[[`, 'theAIC')
   head(sort(allAIC))
+}
 
-  #### how about single genes? ####
-  oneGeneResult = function(gene, plotMe=TRUE) {
-    result = glm(mb$D7 ~ mb[[gene]], family=binomial)$aic
-    return(result)
-  }
-  allAICbyGene = sapply(p45, oneGeneResult)
-  head(sort(allAICbyGene))
-  for(geneNum in head(order(allAICbyGene)) ) {
-    gene = p45[geneNum]
-    boxplot(mb[[gene]] ~ mb$D7 )
-    title(paste(gene, signif(digits=5, allAICbyGene[gene]) ))
-  }
+if(interactive()) {
+  analyzeAllGenes()
+  analyzeAllGenePairs()
 }
