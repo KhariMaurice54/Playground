@@ -17,11 +17,17 @@ fitQWLprobit(testMe=TRUE, plottheData = FALSE, delta=1e-15,
              b1 = 3, b2 = 5)
 testData = WLContinuousdata( b1 = 3, b2 = 5)
 deltaSeq = seq(-3,3,length=100)
-resultSeq = sapply(deltaSeq, fitDelta, theData=testData)
-plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
-
-optResult = optimize(fitDelta, theData=testData,
-                     interval = c(-3,3), tol = 1e-3)
+resultSeq = sapply(deltaSeq, fitWithFixedDelta, 
+                   theData=testData, 
+                   p1=cdf(testData$x1), p2=cdf(testData$x2),
+                   endpoint='y')
+plot(deltaSeq, resultSeq['theAIC', ], xlab='delta', ylab='AIC')
+aicWithFixedDelta = function(...)
+  fitWithFixedDelta(...)$theAIC
+optResult = optimize(f = aicWithFixedDelta, theData=testData,
+                   p1=cdf(testData$x1), p2=cdf(testData$x2),
+                   endpoint='y',
+                   interval = c(-3,3), tol = 1e-3)
 abline(v=optResult$minimum, h=optResult$objective, col='red')
 ```
 
@@ -32,19 +38,24 @@ Now on real survival theData ####
 fitQWLprobit(theData = mb, delta=0,
              x1=names(sort(p45plog))[1],
              x2=names(sort(p45plog))[2],
-             endpoint='ySurv')
+             endpoint='D7')
 deltaSeq = seq(0,3,length=500)
-resultSeq = sapply(deltaSeq, fitDelta, 
+x1=mb[[names(sort(p45plog))[1]]]
+x2=mb[[names(sort(p45plog))[2]]]
+resultSeq = sapply(deltaSeq, 
+                   fitWithFixedDelta, 
+                   return='theAIC',
                    theData=mb, 
-                   x1=names(sort(p45plog))[1],
-                   x2=names(sort(p45plog))[2],
-                   endpoint='ySurv' )
+                   p1=cdf(x1),
+                   p2=cdf(x2),
+                   endpoint='D7' )
 plot(deltaSeq, resultSeq, xlab='delta', ylab='AIC')
 
-optResult = optimize(fitDelta, theData=mb, 
-                     x1=names(sort(p45plog))[1],
-                     x2=names(sort(p45plog))[2],
-                     endpoint='ySurv',
+optResult = optimize(fitWithFixedDelta, theData=mb, 
+                     return='theAIC',
+                     p1=cdf(x1),
+                     p2=cdf(x2),
+                     endpoint='D7',
                      interval = c(-3,3), tol = 1e-7)
 abline(v=optResult$minimum, h=optResult$objective, col='red')
 ```
@@ -60,9 +71,12 @@ abline(v=optResult$minimum, h=optResult$objective, col='red')
 
 system.time(saResult<<-GenSA(par=0, lower=-1, upper= 2,
                              control=list(maxit=100),
-                             fitDelta, plotPoints = TRUE, theData=mb, 
-                             x1=names(sort(p45plog))[1],
-                             x2=names(sort(p45plog))[2],
+                             fitWithFixedDelta, 
+                             plotPoints = TRUE, 
+                             theData=mb, 
+                             return='theAIC',
+                             p1=cdf(x1),
+                             p2=cdf(x2),
                              endpoint='ySurv'))
 str(saResult)
 abline(v=saResult$par, h=saResult$value, col='blue')
@@ -94,6 +108,7 @@ testResult = fitQWLprobit(
   b1 = 10, b2 = 10)
 theFrame = attr(testResult, 'frame')
 ls(env=theFrame)
+summary(theFrame$endpoint)
 #get('Fhat2', env=theFrame)
 #attach(theFrame)
 onePredictor = with(theFrame, {
@@ -104,8 +119,11 @@ onePredictor = with(theFrame, {
 pairs(data.frame(onePredictor, x1 = theFrame$x1, x2 = theFrame$x2) )
 pairs(data.frame(onePredictor, Fhat1 = theFrame$Fhat1, Fhat2 = theFrame$Fhat2) )
 data.frame(onePredictor, Fhat1 = theFrame$Fhat1, Fhat2 = theFrame$Fhat2)
-plot(onePredictor, theFrame$y)
-ROC = function(predictor=onePredictor, y=theFrame$y){
+plot(onePredictor, theFrame$endpoint)
+```
+
+```{r}
+ROC = function(predictor=onePredictor, y=theFrame$endpoint){
   cutoff = sort(predictor)
   cutoff = cutoff[-c(1,length(predictor))]
   sensitivity = sapply(cutoff, function(cutoff1) {

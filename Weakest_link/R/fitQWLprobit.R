@@ -108,7 +108,9 @@ onedimPredictorThreeWay = function(delta12, delta13,
 #' @return  result: The model result outcome object.
 #' @return AIC: The AIC or other goodness of fit measure.
 #'  
-fitWithFixedDelta = function(delta, theData, p1, p2, endpoint, plotPoints = FALSE) {
+fitWithFixedDelta = function(delta, theData, p1, p2, endpoint, 
+                             plotPoints = FALSE,
+                             return=c('result','theAIC')) {
   require(survival)
   predictor = onedimPredictor(delta, p1, p2)
   if(identical(endpoint, 'ySurv') ) 
@@ -134,6 +136,7 @@ fitWithFixedDelta = function(delta, theData, p1, p2, endpoint, plotPoints = FALS
     if(class(tryResult)=='try-error')
       warning('Cannot plot points; probably no active plot.')
   }
+  if(return=='theAIC') return(theAIC)
   return(list(result=result, theAIC=theAIC))
 }
 
