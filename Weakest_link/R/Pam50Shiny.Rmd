@@ -124,13 +124,15 @@ output$estimationplots = renderUI(expr = {
 
   }
 if ("Quantitative Stitching (Delta Fixed)" %in% input$estimethods){
-  
+  #single number delta numeric input
+  #FitQWLprobit 
 }
 if ("Quantitative Stitching (Delta Fitted)" %in% input$estimethods){
-
+  #Leave delta blank
 }
-if ("Conditional Optimization" %in% input$estimethods){
-
+if ("ConditionalMaximum Optimization" %in% input$estimethods){
+  #Beginning program
+  
 }
 
 })

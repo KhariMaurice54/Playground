@@ -1,0 +1,196 @@
+---
+title: "The logit-linear phi model and the quantile stitch model"
+author: "Roger Day"
+date: "7/26/2018"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(WeakestLink)
+```
+
+## weakest link model: definition
+
+The weakest link models says:
+
+Our predictor vector for predicting observation $Y_i$ is 
+${X_i} = ({X_{i1}},...,{X_{im}}) \in {\Re ^m}$. 
+
+The weakest link model is
+
+$E({Y_i}|{X_i} = {x_i}){\rm{ }} = {\rm{ }}{\varphi _{J(i)}}({x_{iJ(i)}}){\rm{, where }}J(i){\rm{ }} = {\rm{  }}\arg {\rm{ }}{\min _j}\{ {\varphi _j}({x_{ij}}):{\rm{  }}j{\rm{ }} = {\rm{ }}1, \ldots ,m\} .$
+
+
+## logit-linear $\varphi$ weakest link model
+
+The logit-linear $\varphi$ weakest link model works as follows:
+
+\[{\varphi _j}\left( x \right) = invlogit\left( {{\alpha _j}{\rm{ }} + {\beta _j}x} \right)\]
+
+so the log-likelhood function is
+
+\[\begin{array}{l}
+L(\alpha ,\beta ) = \sum\limits_{i = 1}^n {\left[ {{Y_i}\log {p_i}(\alpha ,\beta ) + (1 - {Y_i})\log (1 - {p_i}(\alpha ,\beta ))} \right]} \\
+{\rm{where}}\quad {p_i}(\alpha ,\beta ) = \mathop {\min }\limits_j \left\{ {1 - \frac{1}{{\exp ({\alpha _j}{\rm{ + }}{\beta _j}{x_{ij}}{\rm{)}}}}} \right\} = \mathop {\min }\limits_j \left\{ {{\varphi _j}({x_{ij}})} \right\}.
+\end{array}\]
+
+One cannot maximize the likelihood function directly. Two computational methods for find the maximum likelihood estimate include:
+
+- cyclic conditional maximization (repeatedly cycling through the four parameters maximizing each one conditional on the others),
+
+- simulated annealing.
+
+These are both pretty slow, not suitable for use in screening large numbers of pairs of variables.
+
+
+## Curve of Optimal Use
+
+The Curve of Optimal Use (COU) is:
+
+\[{\varphi _1}({x_1}) = {\varphi _2}({x_2})\]
+
+For points on the curve, increasing either $x1$ or $x2$ will not change the response $E(Y)$.
+
+In the case of the logit-linear WL model, the locus is the linear function:
+
+\[COU:{x_1} \to {x_2} = ({a_1} + {b_1}{x_1} - {a_2})/{b_2}\]
+
+with slope ${b_1}/{b_2}$ and intercept $({a_1} - {a_2})/{b_2}$.
+
+If the predictors happen to be normally distributed, then we can also express the COU in terms of the c.d.f.':
+
+\[ {G}({F_2}) = \Delta  - \psi {G}({F_1})\],
+
+where $G$ = the standard normal quantile function ( $qnorm$ ), and
+
+\[\begin{array}{l}
+\Delta  =  - {\mu _2} + \sigma _2^{ - 1}\beta _2^{ - 1}({\alpha _1} - {\alpha _2}) + \sigma _2^{ - 1}\beta _2^{ - 1}{\beta _1}{\sigma _1}{\mu _1}\\
+\psi  = \sigma _2^{ - 1}\beta _2^{ - 1}{\beta _1}{\sigma _1}
+\end{array}\].
+
+
+
+## The quantile stitching model
+
+If we knew the locus of the COU, then the estimation problem would be very simple. Any method regressing the outcome $Y$ on a parameter which parametrizes the COU would do. This goes for any COU, not just the linear one displayed above.
+
+Let's guess (for now) that the COU matches quantiles. That is, on the COU, ${ F}_1 (x_1) - { F}_2 (x_2)$. So the function describing the locus is 
+
+\[{COU:{x_1} \to {x_2} = { F}^{-1}_2 ({ F}_1 (x_1))}\]
+or
+\[{COU:{x_1} \to {x_2} = { F}^{-1}_2 ({ F}_1 (x_1))}.\]
+
+We can estimate ${ F}^{-1}_1$ and ${ F}^{-1}_2$ parametrically or non-parametrically. 
+
+## The $\Delta$ family of COU's.
+
+Our guess is a very strong assumption. We can relax it as follows:
+
+ \[F_2 = {G^{ - 1}}(G(F_1) - \Delta )\]
+ or
+ \[x_2 = COU(x_1)=F^{inv}_2({G^{ - 1}}(G(F_1 (x_1))) - \Delta ))\]
+where $G: [0,1] \to \Re$ can be, for example, $qnorm$ as above, or the $logit$ function.
+
+Here is a graph of the $\Delta$ family:
+
+```{r echo=FALSE,fig.height=3,fig.width=3}
+plot(0:1,0:1, pch='', xlab=expression(F[1]), ylab=expression(F[2]))
+p1vec = seq(0,1,length=200)
+doDelta = function(p, delta=0)
+  pnorm(qnorm(p)+delta)
+for(delta in (-3):3) {
+  lines(p1vec,  doDelta(p1vec,delta))
+  diagpt = uniroot(f = function(p) doDelta(p, delta)-(1-p), interval=c(1e-10,1-1e-10))$root
+  text(diagpt, 1-diagpt, delta)
+}
+```
+
+## Comparing the $\Delta$ COU to the result of the logit-linear WL model.
+
+When $\psi = 1$ in the logit-linear WL model, the COU is in the $\Delta$ family with $\Delta$ as given above.
+
+We can experiment here:
+
+```{r echo=FALSE}
+fluidPage(
+  titlePanel("Comparing the WL linear and the QWL model"),
+  sidebarLayout(
+    sidebarPanel( 
+      sliderInput("a1",
+                  "a1:",
+                  min = -5,
+                  max = 5,
+                  value = 0),
+      sliderInput("a2",
+                  "a2:",
+                  min = -5,
+                  max = 5,
+                  value = 0),
+      sliderInput("b1",
+                  "b1:",
+                  min = -5,
+                  max = 5,
+                  value = 1),
+      sliderInput("b2",
+                  "b2:",
+                  min = -5,
+                  max = 5,
+                  value = 1),
+      sliderInput("mu1",
+                  "mu1:",
+                  min = -5,
+                  max = 5,
+                  value = 0),
+      sliderInput("mu2",
+                  "mu2:",
+                  min = -5,
+                  max = 5,
+                  value = 0),
+      sliderInput("sd1",
+                  "sd1:",
+                  min = 0,
+                  max = 5,
+                  value = 1),
+      sliderInput("sd2",
+                  "sd2:",
+                  min = 0,
+                  max = 5,
+                  value = 1)
+    ),
+    mainPanel(
+      plotOutput("distPlot", width = '600px', height = '600px')
+      )
+  )
+)
+```
+
+```{r echo=FALSE}
+  output$distPlot <- renderPlot({
+    a1=input$a1
+    a2=input$a2
+    b1=input$b1
+    b2=input$b2
+    mu1=input$mu1
+    mu2=input$mu2
+    sd1=input$sd1
+    sd2=input$sd2
+    print(mu1)
+    print(sd1)
+    p1 = seq(0, 1, length=100)
+    x1 = qnorm(p1, mu1, sd1)
+    x2 = ( a1+b1*x1 - a2)/b2
+    p2 = pnorm( x2, mu2, sd2)
+    plot(p1, p2, col='green', cex=2, pch=16)
+    for(delta in seq(-4,4,length=12))
+      lines(p1vec<-seq(0,1,length=100),
+            deltaMap(delta = delta, p1vec))
+    deltaEquiv = (a1-a2)/b2 + (mu1-mu2)/sd2
+    lines(p1vec<-seq(0,1,length=100),
+          deltaMap(delta = deltaEquiv, p1vec),
+          col='blue', lwd=3)
+  })
+```
+
+
