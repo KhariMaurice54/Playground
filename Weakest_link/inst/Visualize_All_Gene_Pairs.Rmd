@@ -1,0 +1,30 @@
+---
+title: "Visualize All Gene Pairs"
+author: "Roger Day"
+date: "7/27/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(WeakestLink)
+require(survival)
+```
+
+```{r}
+  analyzeAllGenes(plotMe = FALSE)
+  # produces allD7AICbyGene and  allCoxLLbyGene
+  showBestGenes()
+  # produces a scatter plot of allD7AICbyGene by allCoxLLbyGene
+  # and box plots for the 2 best and one worst.
+  analyzeAPair(g12=makeGenePairs()[1,])
+  allD7AICbyPair <<- analyzeAllGenePairs(
+    plottheData=FALSE, makeBoxPlots = FALSE)
+  allD7AICbyPair[paste('PTTG1','UBE2C', sep=',')]
+  mean(allD7AICbyPair[paste('PTTG1','UBE2C', sep=',')] <= allD7AICbyPair)
+  sum(allD7AICbyPair[paste('PTTG1','UBE2C', sep=',')] > allD7AICbyPair)
+  head(sort(allD7AICbyPair))
+  sapply(names(head(sort(allD7AICbyPair))),
+    plotPairAndSeparateBoxplots
+  )
+```
