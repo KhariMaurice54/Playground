@@ -220,8 +220,20 @@ fitQWLprobit = function(theData,
     plot(x1, x2, pch=c('0','1')[colorChoice], 
          col=c('red','green')[colorChoice],
          xlab = x1name, ylab = x2name)
-    drawCOU(x1, x2, delta, FhatStyle) 
-    title(paste('delta = ', signif(delta, digits=2)) )
+    drawCOU(x1, x2, delta, FhatStyle, lwd=2) 
+    drawCOU(x1 , x2, delta = 0, FhatStyle = 'normal',
+            col='blue')
+    drawCOU(x1, x2, delta = 0, FhatStyle = 'ecdf',
+            col='purple')
+    legend('top', horiz = TRUE, cex=0.7, inset = -0.1, 
+           xpd=NA, bty = 'n',
+           legend = expression(Delta == 0, 
+                         (F==pnorm), (F==ecdf)),
+           col=c('black', 'blue', 'purple'), lwd=c(0,1,1)
+    )
+    ## Weird. The legend does not show up the first time!
+    title(paste('fitted delta = ', signif(delta, digits=2),  
+                ' (black line)' ))
   }
   theframes = sys.frames()
   numframes = length( theframes)
