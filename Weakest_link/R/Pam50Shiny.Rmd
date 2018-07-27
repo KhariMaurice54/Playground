@@ -1,38 +1,41 @@
 ---
 title: "Pairing PAM50 genes"
 runtime: shiny
-output: html_document
+output: 
+  html_notebook: 
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 require(WeakestLink)
 require(survival)
+library(GenSA)
 ```
 
 This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
 
 To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
 
-## Inputs and Outputs
+## Part A: Choosing/Plotting a dataset
 
-You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
-
+Choose your dataset between METABRIC and Simulated data.  If stimualted data is chosen, adjust the population, as well as the a's and b's.  If METABRIC data is chosen, choose to pair up 45 of the PAM50 genes.
 ```{r eruptions, echo=FALSE}
+rvalues = reactiveValues()
 inputPanel(
-  selectInput("chosen_data", label = "Dataset:",
+  radioButtons("chosen_data", label = "Dataset:",
               choices = c("Metabric", "Simulated"), selected = "Simulated"),
   conditionalPanel("input.chosen_data == 'Simulated'",
                    numericInput("sim_population", label = "Simulated Population",
-                                min = 0, max = 300, value = 100),
-                   sliderInput("bw_adjust", label = "A1 adjustment:",
-                               min = 1, max = 5, value = 1, step = 1), 
-                   sliderInput("bw_adjust", label = "A2 adjustment:",
-                               min = 1, max = 5, value = 2, step = 1), 
-                   sliderInput("bw_adjust", label = "B1 adjustment:",
-                               min = 1, max = 5, value = 1, step = 1), 
-                   sliderInput("bw_adjust", label = "B2 adjustment:",
-                               min = 1, max = 5, value = 2, step = 1)
+                                min = 0, max = 500, value = 100),
+                   sliderInput("a1_adjust", label = "A1 adjustment:",
+                               min = 1, max = 10, value = 1, step = 1), 
+                   sliderInput("a2_adjust", label = "A2 adjustment:",
+                               min = 1, max = 10, value = 2, step = 1), 
+                   sliderInput("b1_adjust", label = "B1 adjustment:",
+                               min = 1, max = 10, value = 1, step = 1), 
+                   sliderInput("b2_adjust", label = "B2 adjustment:",
+                               min = 1, max = 10, value = 2, step = 1)
   ), 
   conditionalPanel("input.chosen_data == 'Metabric'",
                    selectInput("Gene1", label = "G1",
@@ -46,33 +49,91 @@ inputPanel(
   ) 
 )
 
-renderPlot({ 
- g1= input$Gene1
- g2= input$Gene2
- print(g2)
- resultFitted = analyzeAPair(g1 = g1, g2 = g2,
-                        endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
-                        delta = 'fit',
-                        plottheData= TRUE)
-  drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'normal',
-          col='blue')
-  drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'ecdf',
-          col='purple')
+renderPlot({
+  if (input$chosen_data == 'Metabric'){
+    g1= input$Gene1
+    g2= input$Gene2
+    print(g2)
+    resultFitted = analyzeAPair(g1 = g1, g2 = g2,
+                                endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
+                                delta = 'fit',
+                                plottheData= TRUE)
+    drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'normal',
+            col='blue')
+    drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'ecdf',
+            col='purple')
+  }
+    else{
+      rvalues$sim_data = WLContinuousdata(n = input$sim_population, 
+                       a1 = input$a1_adjust, 
+                       a2 = input$a2_adjust,
+                       b1 = input$b1_adjust,
+                       b2 = input$b2_adjust)
+      fitQWLprobit(rvalues$sim_data, delta = c(-3, 3))
+      drawCOUline(a1 = input$a1_adjust, 
+                  a2 = input$a2_adjust,
+                  b1 = input$b1_adjust,
+                  b2 = input$b2_adjust, 
+                  col = "purple",
+                  lty = 2,
+                  lwd = 2)
+      
+      
+    }
   
-})
+}
+)
 ```
 
-## Embedded Application
-
-It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+## Estimation Methods
 
 ```{r tabsets, echo=FALSE}
-shinyAppDir(
-  system.file("examples/06_tabsets", package = "shiny"),
-  options = list(
-    width = "100%", height = 50
-  )
+inputPanel(
+  checkboxGroupInput("estimethods", label = "Estimation Methods",
+                     choices = c("Generated Stimulated Annealing", 
+                     "Quantitative Stitching (Delta Fixed)",
+                     "Quantitative Stitching (Delta Fitted)",
+                     "Conditional Optimization")), 
+  uiOutput("estimationplots")
+  
 )
+output$estimationplots = renderUI(expr = {
+  if ("Generated Stimulated Annealing" %in% input$estimethods){
+    starting_vector = c(a1=0, a2=0, b1=1, b2=1)
+    sv = starting_vector
+    if (input$chosen_data == "Metabric"){
+      mydata = data.frame(x1 = mb[[input$Gene1]], 
+                          x2 = mb[[input$Gene2]], 
+                          y = mb[[input$Endpoints]])  
+    }
+    else{
+      mydata = rvalues$sim_data
+    }
+    print(dim(mydata))
+    print(names(mydata))
+    myfn = function(a1a2b1b2){
+      -1 * Likelydata(a1a2b1b2 = a1a2b1b2, data = mydata)
+    }
+    
+    GenSA::GenSA(par = sv, fn = myfn, lower = sv - 3, upper = sv + 3, 
+    control = list(maxit = 100))
+    drawCOUline(a1 = SA$par["a1"], 
+             a2 = SA$par["a2"], 
+             b1 = SA$par['b1'], 
+             b2 = SA$par["b2"])
+
+  }
+if ("Quantitative Stitching (Delta Fixed)" %in% input$estimethods){
+  
+}
+if ("Quantitative Stitching (Delta Fitted)" %in% input$estimethods){
+
+}
+if ("Conditional Optimization" %in% input$estimethods){
+
+}
+
+})
 ```
 
 Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
