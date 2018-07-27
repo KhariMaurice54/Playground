@@ -136,7 +136,7 @@ fitWithFixedDelta = function(delta, theData, p1, p2, endpoint,
     if(class(tryResult)=='try-error')
       warning('Cannot plot points; probably no active plot.')
   }
-  if(return=='theAIC') return(theAIC)
+  if(identical(return,'theAIC')) return(theAIC)
   return(list(result=result, theAIC=theAIC))
 }
 
