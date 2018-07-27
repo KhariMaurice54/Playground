@@ -1,20 +1,19 @@
-# require(WeakestLink)
-# temp= WLbinarydata()
-# pairs(temp)
-# 
-# temp=WLContinuousdata(n = 150)
-# pairs(temp)
-# 
-# Likelydata()
-# a1seq = seq(0,2,length = 100)
-# a2seq = seq(0,4,length = 100)
-# #One dimensional plot
-# Lvalues = sapply(a1seq, Likelydata, data = temp)
-# plot(a1seq, Lvalues, type = "l")
-# abline(v = a1seq[which.max(Lvalues)])
-# abline(h = max(Lvalues))
+require(WeakestLink)
+temp= WLbinarydata()
+pairs(temp)
+ 
+temp=WLContinuousdata(n = 150)
+pairs(temp)
+Likelydata()
+a1seq = seq(0,2,length = 100)
+a2seq = seq(0,4,length = 100)
+#One dimensional plot
+Lvalues = sapply(a1seq, Likelydata, data = temp)
+plot(a1seq, Lvalues, type = "l")
+abline(v = a1seq[which.max(Lvalues)])
+abline(h = max(Lvalues))
 
-####Two Dimensional Plot####
+ ####Two Dimensional Plot####
 Two_Dimensional = function(){
   a1a2grid = expand.grid(a1seq, a2seq)
   Lvalues = apply(a1a2grid, 1, function(row){Likelydata(a1 = row[1], a2 = row[2])})
