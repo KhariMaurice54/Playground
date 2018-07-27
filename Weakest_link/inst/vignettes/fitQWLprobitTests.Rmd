@@ -118,7 +118,11 @@ onePredictor = with(theFrame, {
 )
 pairs(data.frame(onePredictor, x1 = theFrame$x1, x2 = theFrame$x2) )
 pairs(data.frame(onePredictor, Fhat1 = theFrame$Fhat1, Fhat2 = theFrame$Fhat2) )
-data.frame(onePredictor, Fhat1 = theFrame$Fhat1, Fhat2 = theFrame$Fhat2)
+head(data.frame(onePredictor, Fhat1 = theFrame$Fhat1, Fhat2 = theFrame$Fhat2) )
+```
+
+```{r}
+
 plot(onePredictor, theFrame$endpoint)
 ```
 
