@@ -1,3 +1,5 @@
+#### Weakest_link/R/conditionalMaximization_logitlinear_model.R ####
+
 ####Two Dimensional Plot####
 Two_Dimensional_Plot = function( 
   dataset = WLContinuousdata(),
@@ -29,9 +31,10 @@ Two_Dimensional_Plot = function(
 if(interactive())
   Two_Dimensional_Plot()
 
-####Finding a more accurate maximizer liklihood estimate by "hem-stiching"(conditional maximization)####
+#### Finding a more accurate maximizer liklihood estimate ####
+# by "hem-stiching"(conditional maximization)
 
-####A1 Variation Function####
+#### One-dimensional conditional functions ####
 A1_Varies = function(a1){
   Likelydata(a1 = a1, 
              b1 = starting_vector$b1, 
@@ -56,6 +59,7 @@ B2_Varies = function(b2){
              b2 = b2, 
              a2 = starting_vector$a2)
 }
+
 ConMaxStep = function(){
   newa1 = optimize(f = A1_Varies, interval = c(0,2), maximum = TRUE)$maximum
   starting_vector$a1 <<- newa1
@@ -93,5 +97,8 @@ ConMax = function(tol = 1e-7,
   }
   return(Results)
 }
-# ConMaxResult = ConMax(tol = 1e-9)
-# pairs(ConMaxResult)
+
+if(interactive()) {
+  ConMaxResult = ConMax(tol = 1e-9)
+ pairs(ConMaxResult)
+}
