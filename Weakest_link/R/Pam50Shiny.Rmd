@@ -18,11 +18,11 @@ require(shinyBS)
 
 ## Choosing a dataset to plot
 
-Choose your dataset between METABRIC and Simulated data.  If simulated data is chosen, you can adjust the population size, as well as the a's and b's.   If METABRIC data is chosen, choose a pair of PAM50 genes for the predictors.
+Choose your dataset: either *METABRIC* or *Simulated data*.  If *Simulated data* is chosen, you can adjust the population size, as well as the a's and b's.   If *METABRIC* is chosen, choose a pair of PAM50 genes as the predictors.
 
 
 
-```{r eruptions, echo=FALSE}
+```{r echo=FALSE}
 rvalues = reactiveValues()
 radioButtons("chosen_data", label = "Dataset:",
                choices = c("Metabric", "Simulated"), 
@@ -31,7 +31,7 @@ radioButtons("chosen_data", label = "Dataset:",
 
 ```
 
-```{r}
+```{r conditionalDataplots}
 output$conditionalDataplots = 
   renderUI(
     div(
@@ -42,7 +42,8 @@ output$conditionalDataplots =
                  numericInput(width = 100,
                               "sim_population", 
                               label = "Simulated Sample Size",
-                              min = 0, max = 500, value = 100)),
+                              min = 0, max = 500, value = 100),
+                 actionButton('resample', 'resample')),
           column(3,
                  span(
                    sliderInput("a1_adjust", label = "A1 adjustment:",
@@ -100,8 +101,7 @@ output$fittedMetabric = renderPlot({
 )
 
 output$fittedSimulated = renderPlot({
-    print(input$sim_population)
-    print(input$a1_adjust)
+    input$resample  ### Resampling button 
     try({
     rvalues$sim_data = WLContinuousdata(n = input$sim_population, 
                                         a1 = input$a1_adjust, 
