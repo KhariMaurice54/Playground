@@ -18,7 +18,10 @@ To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authorin
 
 ## Part A: Choosing/Plotting a dataset
 
-Choose your dataset between METABRIC and Simulated data.  If stimualted data is chosen, adjust the population, as well as the a's and b's.  If METABRIC data is chosen, choose to pair up 45 of the PAM50 genes.
+Choose your dataset between METABRIC and Simulated data.  If simulated data is chosen, adjust the population size, as well as the a's and b's.  If METABRIC data is chosen, choose a pair of PAM50 genes for the predictors.
+
+
+
 ```{r eruptions, echo=FALSE}
 rvalues = reactiveValues()
 inputPanel(
