@@ -26,7 +26,8 @@ inputPanel(
   radioButtons("chosen_data", label = "Dataset:",
               choices = c("Metabric", "Simulated"), selected = "Simulated"),
   conditionalPanel("input.chosen_data == 'Simulated'",
-                   numericInput("sim_population", label = "Simulated Population",
+                   numericInput("sim_population", 
+                                label = "Simulated Population",
                                 min = 0, max = 500, value = 100),
                    sliderInput("a1_adjust", label = "A1 adjustment:",
                                min = 1, max = 10, value = 1, step = 1), 
@@ -57,6 +58,7 @@ renderPlot({
     resultFitted = analyzeAPair(g1 = g1, g2 = g2,
                                 endpoint = mb$D7,  # Surv(mb$time, mb$cens) 
                                 delta = 'fit',
+                                printBoxplot = FALSE,
                                 plottheData= TRUE)
     drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'normal',
             col='blue')
@@ -91,12 +93,17 @@ renderPlot({
 inputPanel(
   checkboxGroupInput("estimethods", label = "Estimation Methods",
                      choices = c("Generated Stimulated Annealing", 
-                     "Quantitative Stitching (Delta Fixed)",
-                     "Quantitative Stitching (Delta Fitted)",
-                     "Conditional Optimization")), 
-  uiOutput("estimationplots")
-  
+                                 "Quantitative Stitching (Delta Fixed)",
+                                 "Quantitative Stitching (Delta Fitted)",
+                                 "Conditional Optimization")), 
+  numericInput("Delta", 
+                 label = "Delta",
+                 min = -4, max = 4, value = 0),
+              
+              uiOutput("estimationplots")
+              
 )
+
 output$estimationplots = renderUI(expr = {
   if ("Generated Stimulated Annealing" %in% input$estimethods){
     starting_vector = c(a1=0, a2=0, b1=1, b2=1)
@@ -115,34 +122,43 @@ output$estimationplots = renderUI(expr = {
       -1 * Likelydata(a1a2b1b2 = a1a2b1b2, data = mydata)
     }
     
-    GenSA::GenSA(par = sv, fn = myfn, lower = sv - 3, upper = sv + 3, 
-    control = list(maxit = 100))
+    SA = GenSA(par = sv, fn = myfn, lower = sv - 3, upper = sv + 3, 
+                 control = list(maxit = 100))
     drawCOUline(a1 = SA$par["a1"], 
-             a2 = SA$par["a2"], 
-             b1 = SA$par['b1'], 
-             b2 = SA$par["b2"])
-
+                a2 = SA$par["a2"], 
+                b1 = SA$par['b1'], 
+                b2 = SA$par["b2"])
+    
   }
-if ("Quantitative Stitching (Delta Fixed)" %in% input$estimethods){
-  #single number delta numeric input
-  #FitQWLprobit 
-}
-if ("Quantitative Stitching (Delta Fitted)" %in% input$estimethods){
-  #Leave delta blank
-}
-if ("ConditionalMaximum Optimization" %in% input$estimethods){
-  #Beginning program
   
-}
-
+  if ("Quantitative Stitching (Delta Fixed)" %in% input$estimethods){
+    fitQWLprobit(theData = input$chosen_data, 
+                 x1 = mb[[input$Gene1]], 
+                 x2 = mb[[input$Gene2]], 
+                 y = mb[[input$Endpoints]],   
+                 delta = input$Delta)
+  }
+  if ("Quantitative Stitching (Delta Fitted)" %in% input$estimethods){
+     fitQWLprobit(theData = input$chosen_data, 
+                 x1 = mb[[input$Gene1]], 
+                 x2 = mb[[input$Gene2]], 
+                 y = mb[[input$Endpoints]])
+  }
+  if ("ConditionalMaximum Optimization" %in% input$estimethods){
+    estimateline = ConMaxStep()
+    with(estimateline, 
+         drawCOUline(a1maximizer,a2maximizer,b1maximizer,b2maximizer,
+                     col = "purple", 
+                     lty = 2, 
+                     lwd = 2) 
+    )
+    
+    
+  }
+  
 })
+
 ```
-
-Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
-
-You can also use the `shinyApp` function to define an application inline rather then in an external directory.
-
-In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
 
 
 
