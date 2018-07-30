@@ -1,36 +1,50 @@
 ---
-title: "Pairing PAM50 genes"
-runtime: shiny
+title: "Weakest link models for pairs, applied to PAM50 genes"
 output: 
-  html_notebook: 
-    toc: yes
+  html_document
+runtime: shiny
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 require(WeakestLink)
 require(survival)
 library(GenSA)
+require(shiny)
+require(shinyBS)
+
 ```
 
 
-To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+## Choosing a dataset to plot
 
-## Part A: Choosing/Plotting a dataset
-
-Choose your dataset between METABRIC and Simulated data.  If simulated data is chosen, adjust the population size, as well as the a's and b's.  If METABRIC data is chosen, choose a pair of PAM50 genes for the predictors.
+Choose your dataset between METABRIC and Simulated data.  If simulated data is chosen, you can adjust the population size, as well as the a's and b's.   If METABRIC data is chosen, choose a pair of PAM50 genes for the predictors.
 
 
 
 ```{r eruptions, echo=FALSE}
 rvalues = reactiveValues()
-inputPanel(
-  radioButtons("chosen_data", label = "Dataset:",
-              choices = c("Metabric", "Simulated"), selected = "Simulated"),
-  conditionalPanel("input.chosen_data == 'Simulated'",
-                   numericInput("sim_population", 
-                                label = "Simulated Population",
-                                min = 0, max = 500, value = 100),
+radioButtons("chosen_data", label = "Dataset:",
+               choices = c("Metabric", "Simulated"), 
+               selected = "Simulated",inline = TRUE
+  )
+
+```
+
+```{r}
+output$conditionalDataplots = 
+  renderUI(
+    div(
+      conditionalPanel(
+        "input.chosen_data == 'Simulated'",
+        fluidRow(
+          column(2,
+                 numericInput(width = 100,
+                              "sim_population", 
+                              label = "Simulated Sample Size",
+                              min = 0, max = 500, value = 100)),
+          column(3,
+                 span(
                    sliderInput("a1_adjust", label = "A1 adjustment:",
                                min = 1, max = 10, value = 1, step = 1), 
                    sliderInput("a2_adjust", label = "A2 adjustment:",
@@ -39,21 +53,37 @@ inputPanel(
                                min = 1, max = 10, value = 1, step = 1), 
                    sliderInput("b2_adjust", label = "B2 adjustment:",
                                min = 1, max = 10, value = 2, step = 1)
-  ), 
-  conditionalPanel("input.chosen_data == 'Metabric'",
-                   selectInput("Gene1", label = "G1",
-                               choices = p45),
-                   selectInput("Gene2", label = "G2",
-                               choices = p45),
-                   selectInput("Endpoints", label = "Endpoints",
-                               choices = c("D7")
-                   )
-                   
-  ) 
-)
+                 )
+          ),
+          column(7,
+                 plotOutput('fittedSimulated', width = '350px') 
+          )
+        )
+      ),
+      conditionalPanel(
+        "input.chosen_data == 'Metabric'",
+        fluidRow(
+          column(5,  
+                 selectInput("Gene1", label = "Gene 1",
+                             choices = p45, selected = 'UBE2C'),
+                 selectInput("Gene2", label = "Gene 2",
+                             choices = p45, selected = 'PTTG1'),
+                 selectInput("Endpoints", label = "Endpoints",
+                             choices = c("D7")
+                 )
+          ),
+          column(7,
+                 plotOutput('fittedMetabric', width = '350px') 
+          )
+        ) 
+      )
+    )
+  )
+```
 
-renderPlot({
-  if (input$chosen_data == 'Metabric'){
+```{r}
+output$fittedMetabric = renderPlot({
+  #if (input$chosen_data == 'Metabric'){
     g1= input$Gene1
     g2= input$Gene2
     print(g2)
@@ -67,27 +97,34 @@ renderPlot({
     drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'ecdf',
             col='purple')
   }
-    else{
-      rvalues$sim_data = WLContinuousdata(n = input$sim_population, 
-                       a1 = input$a1_adjust, 
-                       a2 = input$a2_adjust,
-                       b1 = input$b1_adjust,
-                       b2 = input$b2_adjust)
-      fitQWLprobit(rvalues$sim_data, delta = c(-3, 3))
-      drawCOUline(a1 = input$a1_adjust, 
-                  a2 = input$a2_adjust,
-                  b1 = input$b1_adjust,
-                  b2 = input$b2_adjust, 
-                  col = "purple",
-                  lty = 2,
-                  lwd = 2)
-      
-      
-    }
-  
-}
 )
+
+output$fittedSimulated = renderPlot({
+    print(input$sim_population)
+    print(input$a1_adjust)
+    try({
+    rvalues$sim_data = WLContinuousdata(n = input$sim_population, 
+                                        a1 = input$a1_adjust, 
+                                        a2 = input$a2_adjust,
+                                        b1 = input$b1_adjust,
+                                        b2 = input$b2_adjust)
+    fitQWLprobit(rvalues$sim_data, delta = c(-3, 3))
+    drawCOUline(a1 = input$a1_adjust, 
+                a2 = input$a2_adjust,
+                b1 = input$b1_adjust,
+                b2 = input$b2_adjust, 
+                col = "purple",
+                lty = 2,
+                lwd = 2)
+    })
+})
 ```
+
+```{r}
+uiOutput('conditionalDataplots')
+
+```
+
 
 ## Estimation Methods
 
@@ -99,11 +136,11 @@ inputPanel(
                                  "Quantitative Stitching (Delta Fitted)",
                                  "Conditional Optimization")), 
   numericInput("Delta", 
-                 label = "Delta",
-                 min = -4, max = 4, value = 0),
-              
-              uiOutput("estimationplots")
-              
+               label = "Delta",
+               min = -4, max = 4, value = 0),
+  
+  uiOutput("estimationplots")
+  
 )
 
 output$estimationplots = renderUI(expr = {
@@ -125,7 +162,7 @@ output$estimationplots = renderUI(expr = {
     }
     
     SA = GenSA(par = sv, fn = myfn, lower = sv - 3, upper = sv + 3, 
-                 control = list(maxit = 100))
+               control = list(maxit = 100))
     drawCOUline(a1 = SA$par["a1"], 
                 a2 = SA$par["a2"], 
                 b1 = SA$par['b1'], 
@@ -141,7 +178,7 @@ output$estimationplots = renderUI(expr = {
                  delta = input$Delta)
   }
   if ("Quantitative Stitching (Delta Fitted)" %in% input$estimethods){
-     fitQWLprobit(theData = input$chosen_data, 
+    fitQWLprobit(theData = input$chosen_data, 
                  x1 = mb[[input$Gene1]], 
                  x2 = mb[[input$Gene2]], 
                  y = mb[[input$Endpoints]])
@@ -154,10 +191,7 @@ output$estimationplots = renderUI(expr = {
                      lty = 2, 
                      lwd = 2) 
     )
-    
-    
   }
-  
 })
 
 ```
