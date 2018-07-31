@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 require(WeakestLink)
 ```
 
-## weakest link model: definition
+## Weakest link model: definition
 
 The weakest link models says:
 
@@ -111,61 +111,67 @@ for(delta in (-3):3) {
 
 When $\psi = 1$ in the logit-linear WL model, the COU is in the $\Delta$ family with $\Delta$ as given above.
 
+### Comparing the WL linear and the QWL model
+
 We can experiment here:
 
 ```{r echo=FALSE}
-fluidPage(
-  titlePanel("Comparing the WL linear and the QWL model"),
-  sidebarLayout(
-    sidebarPanel( 
+# fluidPage(
+#   titlePanel("Comparing the WL linear and the QWL model"),
+#   sidebarLayout(
+#     sidebarPanel( 
+div(
       fluidRow(
-        column(3, sliderInput("a1",
-                              "a1:",
-                              min = -5,
-                              max = 5,
-                              value = 0)),
-        column(3, sliderInput("a2",
-                              "a2:",
-                              min = -5,
-                              max = 5,
-                              value = 0)),
-        column(3, sliderInput("b1",
-                              "b1:",
-                              min = -5,
-                              max = 5,
-                              value = 1)),
-        column(3, sliderInput("b2",
-                              "b2:",
-                              min = -5,
-                              max = 5,
-                              value = 1))
-      ),
-      fluidRow(
-        column(3, sliderInput("mu1",
-                              "mu1:",
-                              min = -5,
-                              max = 5,
-                              value = 0)),
-        column(3, sliderInput("mu2",
-                              "mu2:",
-                              min = -5,
-                              max = 5,
-                              value = 0)),
-        column(3, sliderInput("sd1",
-                              "sd1:",
-                              min = 0,
-                              max = 5,
-                              value = 1)),
-        column(3, sliderInput("sd2",
-                              "sd2:",
-                              min = 0,
-                              max = 5,
-                              value = 1))
-      )
-    ),
-    mainPanel(
-      plotOutput("distPlot", width = '600px', height = '600px')
-    )
+        column(2, 
+               sliderInput("a1",
+                           "a1:",
+                           min = -5,
+                           max = 5,
+                           value = 0),
+               sliderInput("a2",
+                           "a2:",
+                           min = -5,
+                           max = 5,
+                           value = 0),
+               sliderInput("b1",
+                           "b1:",
+                           min = -5,
+                           max = 5,
+                           value = 1),
+               sliderInput("b2",
+                           "b2:",
+                           min = -5,
+                           max = 5,
+                           value = 1)
+        ),
+        column(2, 
+               sliderInput("mu1",
+                           "mu1:",
+                           min = -5,
+                           max = 5,
+                           value = 0),
+               sliderInput("mu2",
+                           "mu2:",
+                           min = -5,
+                           max = 5,
+                           value = 0),
+               sliderInput("sd1",
+                           "sd1:",
+                           min = 0,
+                           max = 5,
+                           value = 1),
+               sliderInput("sd2",
+                           "sd2:",
+                           min = 0,
+                           max = 5,
+                           value = 1)
+        )
+        ,
+        column(8,
+               #   mainPanel(
+               plotOutput("distPlot", width = '350px', height = '350px')
+               #  )
+        )
   )
 )
 ```
