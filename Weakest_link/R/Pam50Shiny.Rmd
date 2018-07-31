@@ -13,10 +13,7 @@ require(survival)
 library(GenSA)
 ```
 
-This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
-
-To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
-
+This R Markdown/Shiny document that allow the user to plot different Weakest Link models and predictors using METABRIC and Stimulated data.   
 ## Part A: Choosing/Plotting a dataset
 
 Choose your dataset between METABRIC and Simulated data.  If stimualted data is chosen, adjust the population, as well as the a's and b's.  If METABRIC data is chosen, choose to pair up 45 of the PAM50 genes.
@@ -24,7 +21,7 @@ Choose your dataset between METABRIC and Simulated data.  If stimualted data is 
 rvalues = reactiveValues()
 inputPanel(
   radioButtons("chosen_data", label = "Dataset:",
-              choices = c("Metabric", "Simulated"), selected = "Simulated"),
+               choices = c("Metabric", "Simulated"), selected = "Simulated"),
   conditionalPanel("input.chosen_data == 'Simulated'",
                    numericInput("sim_population", 
                                 label = "Simulated Population",
@@ -65,30 +62,30 @@ renderPlot({
     drawCOU(x1 = mb[[g1]], x2 = mb[[g2]], delta = 0, FhatStyle = 'ecdf',
             col='purple')
   }
-    else{
-      rvalues$sim_data = WLContinuousdata(n = input$sim_population, 
-                       a1 = input$a1_adjust, 
-                       a2 = input$a2_adjust,
-                       b1 = input$b1_adjust,
-                       b2 = input$b2_adjust)
-      fitQWLprobit(rvalues$sim_data, delta = c(-3, 3))
-      drawCOUline(a1 = input$a1_adjust, 
-                  a2 = input$a2_adjust,
-                  b1 = input$b1_adjust,
-                  b2 = input$b2_adjust, 
-                  col = "purple",
-                  lty = 2,
-                  lwd = 2)
-      
-      
-    }
+  else{
+    rvalues$sim_data = WLContinuousdata(n = input$sim_population, 
+                                        a1 = input$a1_adjust, 
+                                        a2 = input$a2_adjust,
+                                        b1 = input$b1_adjust,
+                                        b2 = input$b2_adjust)
+    fitQWLprobit(rvalues$sim_data, delta = c(-3, 3))
+    drawCOUline(a1 = input$a1_adjust, 
+                a2 = input$a2_adjust,
+                b1 = input$b1_adjust,
+                b2 = input$b2_adjust, 
+                col = "purple",
+                lty = 2,
+                lwd = 2)
+    
+    
+  }
   
 }
 )
 ```
 
 ## Estimation Methods
-
+Click each checkbox to plot each estimation method.  More than one method can be plotted at a time, so comparisons between all four methods can be made with both datasets.
 ```{r tabsets, echo=FALSE}
 inputPanel(
   checkboxGroupInput("estimethods", label = "Estimation Methods",
@@ -97,11 +94,11 @@ inputPanel(
                                  "Quantitative Stitching (Delta Fitted)",
                                  "Conditional Optimization")), 
   numericInput("Delta", 
-                 label = "Delta",
-                 min = -4, max = 4, value = 0),
-              
-              uiOutput("estimationplots")
-              
+               label = "Delta",
+               min = -4, max = 4, value = 0),
+  
+  uiOutput("estimationplots")
+  
 )
 
 output$estimationplots = renderUI(expr = {
@@ -123,7 +120,7 @@ output$estimationplots = renderUI(expr = {
     }
     
     SA = GenSA(par = sv, fn = myfn, lower = sv - 3, upper = sv + 3, 
-                 control = list(maxit = 100))
+               control = list(maxit = 100))
     drawCOUline(a1 = SA$par["a1"], 
                 a2 = SA$par["a2"], 
                 b1 = SA$par['b1'], 
@@ -132,31 +129,36 @@ output$estimationplots = renderUI(expr = {
   }
   
   if ("Quantitative Stitching (Delta Fixed)" %in% input$estimethods){
-    fitQWLprobit(theData = input$chosen_data, 
-                 x1 = mb[[input$Gene1]], 
-                 x2 = mb[[input$Gene2]], 
-                 y = mb[[input$Endpoints]],   
-                 delta = input$Delta)
+    if (input$chosen_data == "Metabric"){
+      fitQWLprobit(theData = input$chosen_data, 
+                   x1 = mb[[input$Gene1]], 
+                   x2 = mb[[input$Gene2]], 
+                   y = mb[[input$Endpoints]],   
+                   delta = input$Delta)
+    }
+    
   }
   if ("Quantitative Stitching (Delta Fitted)" %in% input$estimethods){
-     fitQWLprobit(theData = input$chosen_data, 
-                 x1 = mb[[input$Gene1]], 
-                 x2 = mb[[input$Gene2]], 
-                 y = mb[[input$Endpoints]])
+    if (input$chosen_data == "Metabric"){
+      fitQWLprobit(theData = input$chosen_data, 
+                   x1 = mb[[input$Gene1]], 
+                   x2 = mb[[input$Gene2]], 
+                   y = mb[[input$Endpoints]])
+    }
   }
-  if ("ConditionalMaximum Optimization" %in% input$estimethods){
-    estimateline = ConMaxStep()
-    with(estimateline, 
-         drawCOUline(a1maximizer,a2maximizer,b1maximizer,b2maximizer,
-                     col = "purple", 
-                     lty = 2, 
-                     lwd = 2) 
-    )
+    if ("ConditionalMaximum Optimization" %in% input$estimethods){
+      estimateline = ConMaxStep()
+      with(estimateline, 
+           drawCOUline(a1maximizer,a2maximizer,b1maximizer,b2maximizer,
+                       col = "purple", 
+                       lty = 2, 
+                       lwd = 2) 
+      )
+      
+      
+    }
     
-    
-  }
-  
-})
+  })
 
 ```
 
